@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoMate - 主界面原型</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 6px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 3px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white h-screen overflow-hidden">
+    <div class="flex h-full">
+        <!-- 左侧边栏 - 智能体列表 -->
+        <aside class="w-80 bg-gray-800 border-r border-gray-700 flex flex-col">
+            <!-- 搜索框 -->
+            <div class="p-4 border-b border-gray-700">
+                <div class="relative">
+                    <input type="text" 
+                           placeholder="搜索智能体..." 
+                           class="w-full bg-gray-700 text-white rounded-lg px-4 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400">
+                    <svg class="absolute left-3 top-2.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- 智能体分组列表 -->
+            <div class="flex-1 overflow-y-auto scrollbar-thin">
+                <!-- 分组 1: 通用助手 -->
+                <div class="mb-2">
+                    <div class="px-4 py-2 bg-gray-750 cursor-pointer hover:bg-gray-700 flex items-center justify-between group">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-gray-400 transform group-hover:rotate-90 transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="text-sm font-medium text-gray-300">通用助手</span>
+                            <span class="text-xs text-gray-500">(1)</span>
+                        </div>
+                    </div>
+
+                    <!-- 智能体列表 -->
+                    <div class="space-y-1">
+                        <div class="mx-2 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-700 flex items-center gap-3 transition-colors bg-blue-600">
+                            <div class="relative">
+                                <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
+                                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                    </svg>
+                                </div>
+                                <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></div>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm font-medium truncate">智能助手</span>
+                                    <span class="text-xs text-green-400">在线</span>
+                                </div>
+                                <p class="text-xs text-gray-400 truncate">通用智能助手，可以帮助您处理各种任务</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 分组 2: OA办公系统 -->
+                <div class="mb-2">
+                    <div class="px-4 py-2 bg-gray-750 cursor-pointer hover:bg-gray-700 flex items-center justify-between group">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-gray-400 transform group-hover:rotate-90 transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="text-sm font-medium text-gray-300">OA办公系统</span>
+                            <span class="text-xs text-gray-500">(2)</span>
+                        </div>
+                    </div>
+
+                    <!-- 智能体列表 -->
+                    <div class="space-y-1">
+                        <div class="mx-2 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-700 flex items-center gap-3 transition-colors">
+                            <div class="relative">
+                                <div class="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center">
+                                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                                    </svg>
+                                </div>
+                                <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></div>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm font-medium truncate">代码助手</span>
+                                    <span class="text-xs text-green-400">在线</span>
+                                </div>
+                                <p class="text-xs text-gray-400 truncate">代码生成和调试助手</p>
+                            </div>
+                        </div>
+
+                        <div class="mx-2 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-700 flex items-center gap-3 transition-colors">
+                            <div class="relative">
+                                <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center">
+                                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                                    </svg>
+                                </div>
+                                <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></div>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm font-medium truncate">待办助手</span>
+                                    <span class="text-xs text-green-400">在线</span>
+                                </div>
+                                <p class="text-xs text-gray-400 truncate">待办事项管理助手</p>
+                            </div>
+                            <div class="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+                                <span class="text-xs font-bold">3</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 底部设置按钮 -->
+            <div class="p-4 border-t border-gray-700">
+                <button class="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition-colors">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    <span class="text-sm text-gray-300">设置</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- 主内容区 - 欢迎页 -->
+        <main class="flex-1 flex flex-col bg-gray-900">
+            <!-- 顶部栏 -->
+            <header class="h-16 border-b border-gray-700 flex items-center justify-between px-6">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold">AutoMate</h1>
+                        <p class="text-xs text-gray-400">智能体交互平台</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-sm text-gray-400">欢迎回来，用户</span>
+                    <div class="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
+                        <svg class="w-5 h-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 欢迎内容 -->
+            <div class="flex-1 flex items-center justify-center">
+                <div class="text-center max-w-md">
+                    <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
+                        <svg class="w-14 h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold mb-3">欢迎使用 AutoMate</h2>
+                    <p class="text-gray-400 mb-6">选择左侧的智能体开始对话，体验智能化的任务处理</p>
+                    <div class="grid grid-cols-3 gap-4 text-center">
+                        <div class="p-4 bg-gray-800 rounded-lg">
+                            <div class="text-2xl font-bold text-blue-400">3</div>
+                            <div class="text-xs text-gray-400 mt-1">可用智能体</div>
+                        </div>
+                        <div class="p-4 bg-gray-800 rounded-lg">
+                            <div class="text-2xl font-bold text-green-400">9</div>
+                            <div class="text-xs text-gray-400 mt-1">可用技能</div>
+                        </div>
+                        <div class="p-4 bg-gray-800 rounded-lg">
+                            <div class="text-2xl font-bold text-purple-400">∞</div>
+                            <div class="text-xs text-gray-400 mt-1">对话次数</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 状态栏 -->
+            <footer class="h-8 border-t border-gray-700 flex items-center justify-between px-4 text-xs text-gray-500">
+                <div class="flex items-center gap-4">
+                    <span class="flex items-center gap-1">
+                        <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                        在线
+                    </span>
+                    <span>v1.0.0</span>
+                </div>
+                <div>AutoMate © 2024</div>
+            </footer>
+        </main>
+    </div>
+</body>
+</html>
