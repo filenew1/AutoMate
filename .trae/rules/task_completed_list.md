@@ -37,3 +37,17 @@
   - 创建提交，提交信息为"优化项目技术栈规范并建立任务记录机制"
   - 推送到远程仓库 origin/main 分支
 - **对应详细设计文档**：无
+
+### 任务4：检查并修复 My_Build.yml 文件
+- **任务名称**：检查并修复 My_Build.yml GitHub Actions工作流配置
+- **完成时间**：2026-01-22
+- **任务目标**：修复工作流配置中的问题和错误
+- **任务范围**：修改 f:\AI软件\AutoMate\.github\workflows\My_Build.yml 文件
+- **任务内容**：
+  - 添加pnpm安装步骤到所有构建任务
+  - 为Windows和Kylin构建任务添加Node.js环境设置
+  - 实现WiX工具安装用于Windows打包
+  - 修正self-hosted runner的语法错误
+  - 添加环境检查步骤用于Kylin构建
+  - 添加构建产物下载路径配置
+- **对应详细设计文档**：无
