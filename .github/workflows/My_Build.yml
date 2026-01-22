@@ -1,23 +1,24 @@
 name: CI Build
-
+# 使用 GitHub Actions 进行 CI 构建
 on:
   push:
+    # 只有 push tag 时触发。匹配 v*，例如 v0.0.1
     tags:
-      - '*automate*'
+      - 'v*'
 
 jobs:
   build-frontend:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node.js
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
+          node-version: '18'
+          cache: 'pnpm'
       - run: pnpm install
       - run: pnpm build
       - uses: actions/upload-artifact@v4
@@ -30,51 +31,56 @@ jobs:
     needs: build-frontend
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
       - name: Download frontend dist
         uses: actions/download-artifact@v4
         with:
           name: frontend-dist
-          path: dist/
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@v1
         with:
-          toolchain: stable
-      - name: Install Tauri prerequisites
-        run: |
-          choco install wixtoolset -y
-          echo "$env:WIX\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-      - name: Install frontend dependencies
-        run: pnpm install
-      - name: Build Tauri
-        run: pnpm tauri build
+          toolchain: 1.70.0
+      - name: Install WiX Toolset
+        run: choco install wixtoolset -y
+      - run: pnpm install
+      - run: pnpm tauri build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+          path: src-tauri/target/release/bundle/
 
   build-kylin-arm64:
-    runs-on: [self-hosted, kylin-arm64]
+    runs-on: self-hosted
+    if: contains(github.event.repository.name, 'kylin-arm64')
     needs: build-frontend
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
       - name: Download frontend dist
         uses: actions/download-artifact@v4
         with:
           name: frontend-dist
-          path: dist/
-      - name: Check Node.js
-        run: node --version || echo "Node.js not found, please install Node.js on the runner"
-      - name: Check pnpm
-        run: pnpm --version || echo "pnpm not found, please install pnpm on the runner"
-      - name: Check Rust
-        run: rustc --version || echo "Rust not found, please install Rust on the runner"
-      - name: Install frontend dependencies
-        run: pnpm install
-      - name: Build Tauri
-        run: pnpm tauri build
-        env:
-          TAURI_BUNDLE_NPM_PACKAGES: "@tauri-apps/cli"
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@v1
+        with:
+          toolchain: 1.70.0
+      - run: pnpm install
+      - run: pnpm tauri build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kylin-arm64-build
+          path: src-tauri/target/release/bundle/
