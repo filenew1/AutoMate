@@ -53,14 +53,94 @@
             max-height: 500px;
             opacity: 1;
         }
+        
+        /* 边栏收缩按钮样式 */
+        .sidebar-toggle {
+            position: absolute;
+            right: -6px;
+            top: 33.33%;
+            width: 12px;
+            height: 40px;
+            background: #4b5563;
+            border: 1px solid #374151;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        
+        .sidebar-toggle:hover {
+            width: 16px;
+            height: 60px;
+            right: -8px;
+            background: #6b7280;
+        }
+        
+        .sidebar-toggle::before {
+            content: '';
+            width: 4px;
+            height: 16px;
+            background: #d1d5db;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-toggle:hover::before {
+            width: 6px;
+            height: 24px;
+        }
+        
+        /* 边栏收缩状态 */
+        #sidebar {
+            transition: width 0.3s ease;
+        }
+        
+        .sidebar-collapsed {
+            width: 60px !important;
+        }
+        
+        .sidebar-collapsed .search-container,
+        .sidebar-collapsed .group-header span,
+        .sidebar-collapsed .group-header .bg-gray-600,
+        .sidebar-collapsed .agent-item .flex-1,
+        .sidebar-collapsed .agent-item .w-5,
+        .sidebar-collapsed .p-4:last-child span {
+            display: none !important;
+        }
+        
+        .sidebar-collapsed .group-header {
+            justify-content: center !important;
+        }
+        
+        .sidebar-collapsed .agent-item {
+            justify-content: center !important;
+            padding: 8px 0 !important;
+        }
+        
+        .sidebar-collapsed .p-4 {
+            padding: 12px !important;
+        }
+        
+        .sidebar-collapsed .p-4:last-child {
+            padding: 16px !important;
+        }
+        
+        .sidebar-collapsed .p-4:last-child svg {
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-white h-screen overflow-hidden">
     <div class="flex h-full">
         <!-- 左侧边栏 - 智能体列表 -->
-        <aside class="w-80 bg-gray-800 border-r border-gray-700 flex flex-col">
+        <aside class="w-80 bg-gray-800 border-r border-gray-700 flex flex-col relative" id="sidebar">
+            <!-- 边栏收缩按钮 -->
+            <div class="sidebar-toggle" id="sidebarToggle"></div>
             <!-- 搜索框 -->
-            <div class="p-4 border-b border-gray-700">
+            <div class="p-4 border-b border-gray-700 search-container">
                 <div class="relative">
                     <input type="text" 
                            placeholder="搜索智能体..." 
@@ -466,6 +546,14 @@
                     targetChatContent.classList.remove('hidden');
                 }
             });
+        });
+
+        // 边栏收缩功能
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('sidebar-collapsed');
         });
     </script>
 </body>
