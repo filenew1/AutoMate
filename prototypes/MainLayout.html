@@ -373,7 +373,7 @@
                                     id="message-input-001"
                                     placeholder="输入消息..." 
                                     rows="1"
-                                    class="w-full bg-gray-700 text-white rounded-lg px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 resize-none"
+                                    class="w-full bg-gray-700 text-white rounded-lg px-4 py-3 pr-10 pb-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 resize-none scrollbar-thin"
                                     style="min-height: 88px; max-height: 120px;"></textarea>
                                 <button class="absolute left-3 bottom-3 text-gray-400 hover:text-white transition-colors">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -423,7 +423,7 @@
                                     id="message-input-002"
                                     placeholder="输入消息..." 
                                     rows="1"
-                                    class="w-full bg-gray-700 text-white rounded-lg px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 resize-none"
+                                    class="w-full bg-gray-700 text-white rounded-lg px-4 py-3 pr-10 pb-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 resize-none scrollbar-thin"
                                     style="min-height: 88px; max-height: 120px;"></textarea>
                                 <button class="absolute left-3 bottom-3 text-gray-400 hover:text-white transition-colors">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -473,7 +473,7 @@
                                     id="message-input-003"
                                     placeholder="输入消息..." 
                                     rows="1"
-                                    class="w-full bg-gray-700 text-white rounded-lg px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 resize-none"
+                                    class="w-full bg-gray-700 text-white rounded-lg px-4 py-3 pr-10 pb-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 resize-none scrollbar-thin"
                                     style="min-height: 88px; max-height: 120px;"></textarea>
                                 <button class="absolute left-3 bottom-3 text-gray-400 hover:text-white transition-colors">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -603,6 +603,122 @@
             sidebar.classList.toggle('sidebar-collapsed');
         });
 
+        // 随机回复内容库
+        const randomResponses = {
+            'agent-001': [
+                '你好！很高兴为你服务。',
+                '请问有什么可以帮助你的吗？',
+                '我明白了，让我想想...',
+                '这个问题很有趣！',
+                '好的，我会尽力帮助你。',
+                '你说得对，确实如此。',
+                '让我为你详细解释一下。',
+                '我理解你的需求。',
+                '这是一个很好的建议！',
+                '我会记住这个的。'
+            ],
+            'agent-002': [
+                '代码有问题吗？让我看看。',
+                '这个功能可以这样实现...',
+                '你可以试试这个方法。',
+                '代码的逻辑看起来是对的。',
+                '让我为你优化一下这段代码。',
+                '这个bug可能是因为...',
+                '你需要添加一个条件判断。',
+                '使用这个函数会更高效。',
+                '代码缩进需要调整一下。',
+                '这个变量名不够清晰。'
+            ],
+            'agent-003': [
+                '需要添加新的待办事项吗？',
+                '让我帮你整理一下待办清单。',
+                '这个任务的截止日期是什么时候？',
+                '我已经记录了这个待办事项。',
+                '你还有其他待办事项吗？',
+                '这个任务已经完成了吗？',
+                '需要我提醒你什么吗？',
+                '让我为你优先级排序。',
+                '这个任务需要分配给谁？',
+                '待办事项已更新。'
+            ]
+        };
+
+        // 获取当前时间
+        function getCurrentTime() {
+            const now = new Date();
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            if (hours < 10) hours = '0' + hours;
+            if (minutes < 10) minutes = '0' + minutes;
+            return `${hours}:${minutes}`;
+        }
+
+        // 添加消息到聊天窗口
+        function addMessage(chatPanelId, message, isUser) {
+            const chatPanel = document.getElementById(chatPanelId);
+            const messageContainer = chatPanel.querySelector('.flex-1.overflow-y-auto');
+            
+            const messageElement = document.createElement('div');
+            messageElement.className = `flex ${isUser ? 'justify-end' : 'justify-start'} mb-6`;
+            
+            if (isUser) {
+                messageElement.innerHTML = `
+                    <div class="max-w-lg">
+                        <div class="bg-blue-600 rounded-2xl rounded-tr-sm px-4 py-3 shadow-lg">
+                            <p class="text-sm">${message}</p>
+                        </div>
+                        <div class="text-right mt-1">
+                            <span class="text-xs text-gray-500">${getCurrentTime()}</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                const agentId = chatPanelId.replace('chat-', '');
+                let avatarColor = 'blue';
+                let avatarIcon = '';
+                
+                if (agentId === 'agent-002') {
+                    avatarColor = 'purple';
+                    avatarIcon = '<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>';
+                } else if (agentId === 'agent-003') {
+                    avatarColor = 'orange';
+                    avatarIcon = '<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>';
+                } else {
+                    avatarIcon = '<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>';
+                }
+                
+                messageElement.innerHTML = `
+                    <div class="flex gap-3 max-w-lg">
+                        <div class="w-8 h-8 bg-gradient-to-br from-${avatarColor}-400 to-${avatarColor}-600 rounded-full flex items-center justify-center flex-shrink-0">
+                            ${avatarIcon}
+                        </div>
+                        <div class="flex-1">
+                            <div class="bg-gray-800 rounded-2xl rounded-tl-sm px-4 py-3 shadow-lg">
+                                <p class="text-sm">${message}</p>
+                            </div>
+                            <div class="text-left mt-1 ml-1">
+                                <span class="text-xs text-gray-500">${getCurrentTime()}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            messageContainer.appendChild(messageElement);
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        }
+
+        // 自动回复
+        function autoReply(chatPanelId) {
+            const agentId = chatPanelId.replace('chat-', '');
+            const responses = randomResponses[agentId] || randomResponses['agent-001'];
+            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+            
+            setTimeout(() => {
+                addMessage(chatPanelId, randomResponse, false);
+            }, 1000);
+        }
+
         // 发送按钮状态切换逻辑
         function setupSendButton(inputId, buttonId) {
             const input = document.getElementById(inputId);
@@ -613,6 +729,49 @@
                 button.disabled = !hasContent;
             }
 
+            // 发送消息
+            function sendMessage() {
+                const message = input.value.trim();
+                
+                if (message) {
+                    // 确定当前活动的聊天窗口
+                    const activeAgentItem = document.querySelector('.agent-item.selected');
+                    if (activeAgentItem) {
+                        const agentId = activeAgentItem.dataset.agentId;
+                        const chatPanelId = `chat-${agentId}`;
+                        
+                        // 添加用户消息
+                        addMessage(chatPanelId, message, true);
+                        
+                        // 清空输入框
+                        input.value = '';
+                        
+                        // 更新发送按钮状态
+                        updateButtonStatus();
+                        
+                        // 自动回复
+                        autoReply(chatPanelId);
+                    }
+                }
+            }
+
+            // 发送消息事件
+            function handleSendMessage() {
+                sendMessage();
+            }
+
+            // 点击发送按钮
+            button.addEventListener('click', handleSendMessage);
+            
+            // 按下Enter键发送消息（Shift+Enter换行）
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage();
+                }
+            });
+
+            // 输入事件监听
             input.addEventListener('input', updateButtonStatus);
             input.addEventListener('change', updateButtonStatus);
             
