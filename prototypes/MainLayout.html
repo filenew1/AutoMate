@@ -19,6 +19,40 @@
         .scrollbar-thin::-webkit-scrollbar-thumb:hover {
             background: #6b7280;
         }
+        .agent-item {
+            transition: all 0.2s ease;
+        }
+        .agent-item:active {
+            transform: scale(0.98);
+        }
+        .agent-item.selected {
+            background: linear-gradient(to right, #2563eb, #3b82f6);
+        }
+        .group-header {
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+        .group-header:hover {
+            background: rgba(55, 65, 81, 0.5);
+        }
+        .group-header .chevron-icon {
+            transition: transform 0.3s ease;
+        }
+        .group-header.collapsed .chevron-icon {
+            transform: rotate(-90deg);
+        }
+        .group-content {
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        .group-content.collapsed {
+            max-height: 0;
+            opacity: 0;
+        }
+        .group-content.expanded {
+            max-height: 500px;
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-white h-screen overflow-hidden">
@@ -41,19 +75,19 @@
             <div class="flex-1 overflow-y-auto scrollbar-thin">
                 <!-- 分组 1: 通用助手 -->
                 <div class="mb-2">
-                    <div class="px-4 py-2 bg-gray-750 cursor-pointer hover:bg-gray-700 flex items-center justify-between group">
-                        <div class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-gray-400 transform group-hover:rotate-90 transition-transform" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                    <div class="group-header px-4 py-3 bg-gray-700/30 cursor-pointer flex items-center justify-between group" data-group="general">
+                        <div class="flex items-center gap-3">
+                            <svg class="chevron-icon w-5 h-5 text-gray-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                             </svg>
-                            <span class="text-sm font-medium text-gray-300">通用助手</span>
-                            <span class="text-xs text-gray-500">(1)</span>
+                            <span class="text-sm font-semibold text-gray-200">通用助手</span>
+                            <span class="text-xs bg-gray-600 text-gray-300 px-2 py-0.5 rounded-full">1</span>
                         </div>
                     </div>
 
                     <!-- 智能体列表 -->
-                    <div class="space-y-1">
-                        <div class="mx-2 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-700 flex items-center gap-3 transition-colors bg-blue-600">
+                    <div class="group-content space-y-1 expanded">
+                        <div class="agent-item mx-2 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-700 flex items-center gap-3 transition-colors selected" data-agent-id="agent-001" data-agent-name="智能助手" data-agent-avatar="blue">
                             <div class="relative">
                                 <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
                                     <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -75,19 +109,19 @@
 
                 <!-- 分组 2: OA办公系统 -->
                 <div class="mb-2">
-                    <div class="px-4 py-2 bg-gray-750 cursor-pointer hover:bg-gray-700 flex items-center justify-between group">
-                        <div class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-gray-400 transform group-hover:rotate-90 transition-transform" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                    <div class="group-header px-4 py-3 bg-gray-700/30 cursor-pointer flex items-center justify-between group" data-group="oa">
+                        <div class="flex items-center gap-3">
+                            <svg class="chevron-icon w-5 h-5 text-gray-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                             </svg>
-                            <span class="text-sm font-medium text-gray-300">OA办公系统</span>
-                            <span class="text-xs text-gray-500">(2)</span>
+                            <span class="text-sm font-semibold text-gray-200">OA办公系统</span>
+                            <span class="text-xs bg-gray-600 text-gray-300 px-2 py-0.5 rounded-full">2</span>
                         </div>
                     </div>
 
                     <!-- 智能体列表 -->
-                    <div class="space-y-1">
-                        <div class="mx-2 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-700 flex items-center gap-3 transition-colors">
+                    <div class="group-content space-y-1 expanded">
+                        <div class="agent-item mx-2 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-700 flex items-center gap-3 transition-colors" data-agent-id="agent-002" data-agent-name="代码助手" data-agent-avatar="purple">
                             <div class="relative">
                                 <div class="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center">
                                     <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,7 +139,7 @@
                             </div>
                         </div>
 
-                        <div class="mx-2 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-700 flex items-center gap-3 transition-colors">
+                        <div class="agent-item mx-2 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-700 flex items-center gap-3 transition-colors" data-agent-id="agent-003" data-agent-name="待办助手" data-agent-avatar="orange">
                             <div class="relative">
                                 <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center">
                                     <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -143,17 +177,17 @@
 
         <!-- 主内容区 - 欢迎页 -->
         <main class="flex-1 flex flex-col bg-gray-900">
-            <!-- 顶部栏 -->
-            <header class="h-16 border-b border-gray-700 flex items-center justify-between px-6">
+            <!-- 顶部栏 - 动态更新 -->
+            <header id="mainHeader" class="h-16 border-b border-gray-700 flex items-center justify-between px-6">
                 <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <div id="mainAvatar" class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-lg font-bold">AutoMate</h1>
-                        <p class="text-xs text-gray-400">智能体交互平台</p>
+                        <h1 id="mainTitle" class="text-lg font-bold">AutoMate</h1>
+                        <p id="mainSubtitle" class="text-xs text-gray-400">智能体交互平台</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
@@ -166,28 +200,203 @@
                 </div>
             </header>
 
-            <!-- 欢迎内容 -->
-            <div class="flex-1 flex items-center justify-center">
-                <div class="text-center max-w-md">
-                    <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
-                        <svg class="w-14 h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                        </svg>
+            <!-- 内容容器 -->
+            <div class="content-container flex-1 flex flex-col overflow-hidden">
+                <!-- 欢迎内容 -->
+                <div id="welcomeContent" class="h-full flex items-center justify-center">
+                    <div class="text-center max-w-md">
+                        <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
+                            <svg class="w-14 h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                            </svg>
+                        </div>
+                        <h2 class="text-2xl font-bold mb-3">欢迎使用 AutoMate</h2>
+                        <p class="text-gray-400 mb-6">选择左侧的智能体开始对话，体验智能化的任务处理</p>
+                        <div class="grid grid-cols-3 gap-4 text-center">
+                            <div class="p-4 bg-gray-800 rounded-lg">
+                                <div class="text-2xl font-bold text-blue-400">3</div>
+                                <div class="text-xs text-gray-400 mt-1">可用智能体</div>
+                            </div>
+                            <div class="p-4 bg-gray-800 rounded-lg">
+                                <div class="text-2xl font-bold text-green-400">9</div>
+                                <div class="text-xs text-gray-400 mt-1">可用技能</div>
+                            </div>
+                            <div class="p-4 bg-gray-800 rounded-lg">
+                                <div class="text-2xl font-bold text-purple-400">∞</div>
+                                <div class="text-xs text-gray-400 mt-1">对话次数</div>
+                            </div>
+                        </div>
                     </div>
-                    <h2 class="text-2xl font-bold mb-3">欢迎使用 AutoMate</h2>
-                    <p class="text-gray-400 mb-6">选择左侧的智能体开始对话，体验智能化的任务处理</p>
-                    <div class="grid grid-cols-3 gap-4 text-center">
-                        <div class="p-4 bg-gray-800 rounded-lg">
-                            <div class="text-2xl font-bold text-blue-400">3</div>
-                            <div class="text-xs text-gray-400 mt-1">可用智能体</div>
+                </div>
+
+                <!-- 智能体聊天窗口 -->
+                <div id="chat-agent-001" class="chat-content-panel h-full flex flex-col bg-gray-900 hidden">
+                    <div class="flex-1 overflow-y-auto scrollbar-thin p-6 space-y-6">
+                        <div class="flex items-center gap-4">
+                            <div class="flex-1 h-px bg-gray-700"></div>
+                            <span class="text-xs text-gray-500">今天</span>
+                            <div class="flex-1 h-px bg-gray-700"></div>
                         </div>
-                        <div class="p-4 bg-gray-800 rounded-lg">
-                            <div class="text-2xl font-bold text-green-400">9</div>
-                            <div class="text-xs text-gray-400 mt-1">可用技能</div>
+                        <div class="flex justify-end">
+                            <div class="max-w-lg">
+                                <div class="bg-blue-600 rounded-2xl rounded-tr-sm px-4 py-3 shadow-lg">
+                                    <p class="text-sm">你好！</p>
+                                </div>
+                                <div class="text-right mt-1">
+                                    <span class="text-xs text-gray-500">14:30</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="p-4 bg-gray-800 rounded-lg">
-                            <div class="text-2xl font-bold text-purple-400">∞</div>
-                            <div class="text-xs text-gray-400 mt-1">对话次数</div>
+                        <div class="flex justify-start">
+                            <div class="flex gap-3 max-w-lg">
+                                <div class="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="bg-gray-800 rounded-2xl rounded-tl-sm px-4 py-3 shadow-lg">
+                                        <p class="text-sm">你好！我是智能助手，有什么可以帮助你的吗？</p>
+                                    </div>
+                                    <div class="text-left mt-1 ml-1">
+                                        <span class="text-xs text-gray-500">14:31</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border-t border-gray-700 bg-gray-800 p-4">
+                        <div class="flex gap-3 items-end">
+                            <button class="p-2 hover:bg-gray-700 rounded-lg transition-colors text-gray-400 hover:text-white">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                                </svg>
+                            </button>
+                            <div class="flex-1 relative">
+                                <textarea 
+                                    placeholder="输入消息..." 
+                                    rows="1"
+                                    class="w-full bg-gray-700 text-white rounded-lg px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 resize-none"
+                                    style="min-height: 44px; max-height: 120px;"></textarea>
+                                <button class="absolute right-3 bottom-3 text-gray-400 hover:text-white transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <button class="p-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 代码助手聊天窗口 -->
+                <div id="chat-agent-002" class="chat-content-panel h-full flex flex-col bg-gray-900 hidden">
+                    <div class="flex-1 overflow-y-auto scrollbar-thin p-6 space-y-6">
+                        <div class="flex items-center gap-4">
+                            <div class="flex-1 h-px bg-gray-700"></div>
+                            <span class="text-xs text-gray-500">今天</span>
+                            <div class="flex-1 h-px bg-gray-700"></div>
+                        </div>
+                        <div class="flex justify-start">
+                            <div class="flex gap-3 max-w-lg">
+                                <div class="w-8 h-8 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="bg-gray-800 rounded-2xl rounded-tl-sm px-4 py-3 shadow-lg">
+                                        <p class="text-sm">你好！我是代码助手，我可以帮你生成、调试和优化代码。</p>
+                                    </div>
+                                    <div class="text-left mt-1 ml-1">
+                                        <span class="text-xs text-gray-500">14:32</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border-t border-gray-700 bg-gray-800 p-4">
+                        <div class="flex gap-3 items-end">
+                            <button class="p-2 hover:bg-gray-700 rounded-lg transition-colors text-gray-400 hover:text-white">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                                </svg>
+                            </button>
+                            <div class="flex-1 relative">
+                                <textarea 
+                                    placeholder="输入消息..." 
+                                    rows="1"
+                                    class="w-full bg-gray-700 text-white rounded-lg px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 resize-none"
+                                    style="min-height: 44px; max-height: 120px;"></textarea>
+                                <button class="absolute right-3 bottom-3 text-gray-400 hover:text-white transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <button class="p-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 待办助手聊天窗口 -->
+                <div id="chat-agent-003" class="chat-content-panel h-full flex flex-col bg-gray-900 hidden">
+                    <div class="flex-1 overflow-y-auto scrollbar-thin p-6 space-y-6">
+                        <div class="flex items-center gap-4">
+                            <div class="flex-1 h-px bg-gray-700"></div>
+                            <span class="text-xs text-gray-500">今天</span>
+                            <div class="flex-1 h-px bg-gray-700"></div>
+                        </div>
+                        <div class="flex justify-start">
+                            <div class="flex gap-3 max-w-lg">
+                                <div class="w-8 h-8 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="bg-gray-800 rounded-2xl rounded-tl-sm px-4 py-3 shadow-lg">
+                                        <p class="text-sm">你好！我是待办助手，我可以帮你管理待办事项。</p>
+                                    </div>
+                                    <div class="text-left mt-1 ml-1">
+                                        <span class="text-xs text-gray-500">14:33</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border-t border-gray-700 bg-gray-800 p-4">
+                        <div class="flex gap-3 items-end">
+                            <button class="p-2 hover:bg-gray-700 rounded-lg transition-colors text-gray-400 hover:text-white">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                                </svg>
+                            </button>
+                            <div class="flex-1 relative">
+                                <textarea 
+                                    placeholder="输入消息..." 
+                                    rows="1"
+                                    class="w-full bg-gray-700 text-white rounded-lg px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 resize-none"
+                                    style="min-height: 44px; max-height: 120px;"></textarea>
+                                <button class="absolute right-3 bottom-3 text-gray-400 hover:text-white transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <button class="p-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                </svg>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -206,5 +415,73 @@
             </footer>
         </main>
     </div>
+
+    <script>
+        const agentItems = document.querySelectorAll('.agent-item');
+        const groupHeaders = document.querySelectorAll('.group-header');
+        const groupContents = document.querySelectorAll('.group-content');
+        const welcomeContent = document.getElementById('welcomeContent');
+
+        const avatarGradients = {
+            'blue': 'from-blue-400 to-blue-600',
+            'purple': 'from-purple-400 to-purple-600',
+            'orange': 'from-orange-400 to-orange-600'
+        };
+
+        const avatarIcons = {
+            'blue': '<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>',
+            'purple': '<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>',
+            'orange': '<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>'
+        };
+
+        groupHeaders.forEach(header => {
+            header.addEventListener('click', function() {
+                const content = this.parentElement.querySelector('.group-content');
+
+                if (content.classList.contains('expanded')) {
+                    content.classList.remove('expanded');
+                    content.classList.add('collapsed');
+                    this.classList.remove('expanded');
+                    this.classList.add('collapsed');
+                } else {
+                    content.classList.remove('collapsed');
+                    content.classList.add('expanded');
+                    this.classList.remove('collapsed');
+                    this.classList.add('expanded');
+                }
+            });
+        });
+
+        agentItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const agentId = this.dataset.agentId;
+                const agentName = this.dataset.agentName;
+                const agentAvatar = this.dataset.agentAvatar;
+
+                agentItems.forEach(i => i.classList.remove('selected'));
+                this.classList.add('selected');
+
+                const welcomeContent = document.getElementById('welcomeContent');
+                welcomeContent.classList.add('hidden');
+
+                const allChatContents = document.querySelectorAll('.chat-content-panel');
+                allChatContents.forEach(content => content.classList.add('hidden'));
+
+                const mainAvatar = document.getElementById('mainAvatar');
+                const mainTitle = document.getElementById('mainTitle');
+                const mainSubtitle = document.getElementById('mainSubtitle');
+
+                mainTitle.textContent = agentName;
+                mainSubtitle.textContent = '在线';
+                mainAvatar.className = `w-10 h-10 bg-gradient-to-br ${avatarGradients[agentAvatar]} rounded-lg flex items-center justify-center`;
+                mainAvatar.innerHTML = avatarIcons[agentAvatar].replace('w-4 h-4', 'w-6 h-6');
+
+                const targetChatContent = document.getElementById(`chat-${agentId}`);
+                if (targetChatContent) {
+                    targetChatContent.classList.remove('hidden');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
