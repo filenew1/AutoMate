@@ -350,6 +350,7 @@
                         <div class="flex gap-3 items-end">
                             <div class="flex-1 relative">
                                 <textarea 
+                                    id="message-input-001"
                                     placeholder="输入消息..." 
                                     rows="1"
                                     class="w-full bg-gray-700 text-white rounded-lg px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 resize-none"
@@ -359,7 +360,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
                                     </svg>
                                 </button>
-                                <button class="absolute right-3 bottom-3 text-gray-400 hover:text-white transition-colors">
+                                <button id="send-btn-001" class="absolute right-3 bottom-3 text-gray-400 hover:text-white transition-colors" disabled>
                                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                                     </svg>
@@ -399,6 +400,7 @@
                         <div class="flex gap-3 items-end">
                             <div class="flex-1 relative">
                                 <textarea 
+                                    id="message-input-002"
                                     placeholder="输入消息..." 
                                     rows="1"
                                     class="w-full bg-gray-700 text-white rounded-lg px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 resize-none"
@@ -408,7 +410,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
                                     </svg>
                                 </button>
-                                <button class="absolute right-3 bottom-3 text-gray-400 hover:text-white transition-colors">
+                                <button id="send-btn-002" class="absolute right-3 bottom-3 text-gray-400 hover:text-white transition-colors" disabled>
                                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                                     </svg>
@@ -448,6 +450,7 @@
                         <div class="flex gap-3 items-end">
                             <div class="flex-1 relative">
                                 <textarea 
+                                    id="message-input-003"
                                     placeholder="输入消息..." 
                                     rows="1"
                                     class="w-full bg-gray-700 text-white rounded-lg px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 resize-none"
@@ -457,7 +460,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
                                     </svg>
                                 </button>
-                                <button class="absolute right-3 bottom-3 text-gray-400 hover:text-white transition-colors">
+                                <button id="send-btn-003" class="absolute right-3 bottom-3 text-gray-400 hover:text-white transition-colors" disabled>
                                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                                     </svg>
@@ -579,6 +582,37 @@
         sidebarToggle.addEventListener('click', function() {
             sidebar.classList.toggle('sidebar-collapsed');
         });
+
+        // 发送按钮状态切换逻辑
+        function setupSendButton(inputId, buttonId) {
+            const input = document.getElementById(inputId);
+            const button = document.getElementById(buttonId);
+
+            function updateButtonStatus() {
+                const hasContent = input.value.trim() !== '';
+                
+                if (hasContent) {
+                    button.disabled = false;
+                    button.classList.remove('text-gray-400', 'hover:text-white');
+                    button.classList.add('text-blue-500', 'hover:text-blue-400');
+                } else {
+                    button.disabled = true;
+                    button.classList.remove('text-blue-500', 'hover:text-blue-400', 'hover:text-white');
+                    button.classList.add('text-gray-400');
+                }
+            }
+
+            input.addEventListener('input', updateButtonStatus);
+            input.addEventListener('change', updateButtonStatus);
+            
+            // 初始检查
+            updateButtonStatus();
+        }
+
+        // 为每个聊天窗口设置发送按钮
+        setupSendButton('message-input-001', 'send-btn-001');
+        setupSendButton('message-input-002', 'send-btn-002');
+        setupSendButton('message-input-003', 'send-btn-003');
     </script>
 </body>
 </html>
