@@ -53,14 +53,94 @@
             max-height: 500px;
             opacity: 1;
         }
+        
+        /* 边栏收缩按钮样式 */
+        .sidebar-toggle {
+            position: absolute;
+            right: -6px;
+            top: 33.33%;
+            width: 12px;
+            height: 40px;
+            background: #4b5563;
+            border: 1px solid #374151;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        
+        .sidebar-toggle:hover {
+            width: 16px;
+            height: 60px;
+            right: -8px;
+            background: #6b7280;
+        }
+        
+        .sidebar-toggle::before {
+            content: '';
+            width: 4px;
+            height: 16px;
+            background: #d1d5db;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-toggle:hover::before {
+            width: 6px;
+            height: 24px;
+        }
+        
+        /* 边栏收缩状态 */
+        #sidebar {
+            transition: width 0.3s ease;
+        }
+        
+        .sidebar-collapsed {
+            width: 60px !important;
+        }
+        
+        .sidebar-collapsed .search-container,
+        .sidebar-collapsed .group-header span,
+        .sidebar-collapsed .group-header .bg-gray-600,
+        .sidebar-collapsed .agent-item .flex-1,
+        .sidebar-collapsed .agent-item .w-5,
+        .sidebar-collapsed .p-4:last-child span {
+            display: none !important;
+        }
+        
+        .sidebar-collapsed .group-header {
+            justify-content: center !important;
+        }
+        
+        .sidebar-collapsed .agent-item {
+            justify-content: center !important;
+            padding: 8px 0 !important;
+        }
+        
+        .sidebar-collapsed .p-4 {
+            padding: 12px !important;
+        }
+        
+        .sidebar-collapsed .p-4:last-child {
+            padding: 16px !important;
+        }
+        
+        .sidebar-collapsed .p-4:last-child svg {
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-white h-screen overflow-hidden">
     <div class="flex h-full">
         <!-- 左侧边栏 - 智能体列表 -->
-        <aside class="w-80 bg-gray-800 border-r border-gray-700 flex flex-col">
+        <aside class="w-80 bg-gray-800 border-r border-gray-700 flex flex-col relative" id="sidebar">
+            <!-- 边栏收缩按钮 -->
+            <div class="sidebar-toggle" id="sidebarToggle"></div>
             <!-- 搜索框 -->
-            <div class="p-4 border-b border-gray-700">
+            <div class="p-4 border-b border-gray-700 search-container">
                 <div class="relative">
                     <input type="text" 
                            id="searchInput"
@@ -268,25 +348,23 @@
                     </div>
                     <div class="border-t border-gray-700 bg-gray-800 p-4">
                         <div class="flex gap-3 items-end">
-                            <button class="p-2 hover:bg-gray-700 rounded-lg transition-colors text-gray-400 hover:text-white">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
-                                </svg>
-                            </button>
                             <div class="flex-1 relative">
                                 <textarea 
                                     placeholder="输入消息..." 
                                     rows="1"
                                     class="w-full bg-gray-700 text-white rounded-lg px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 resize-none"
                                     style="min-height: 88px; max-height: 120px;"></textarea>
+                                <button class="absolute left-3 bottom-3 text-gray-400 hover:text-white transition-colors">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                                    </svg>
+                                </button>
                                 <button class="absolute right-3 bottom-3 text-gray-400 hover:text-white transition-colors">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                    </svg>
                                 </button>
                             </div>
-                            <button class="p-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
-                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                                </svg>
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -319,25 +397,23 @@
                     </div>
                     <div class="border-t border-gray-700 bg-gray-800 p-4">
                         <div class="flex gap-3 items-end">
-                            <button class="p-2 hover:bg-gray-700 rounded-lg transition-colors text-gray-400 hover:text-white">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
-                                </svg>
-                            </button>
                             <div class="flex-1 relative">
                                 <textarea 
                                     placeholder="输入消息..." 
                                     rows="1"
                                     class="w-full bg-gray-700 text-white rounded-lg px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 resize-none"
                                     style="min-height: 88px; max-height: 120px;"></textarea>
+                                <button class="absolute left-3 bottom-3 text-gray-400 hover:text-white transition-colors">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                                    </svg>
+                                </button>
                                 <button class="absolute right-3 bottom-3 text-gray-400 hover:text-white transition-colors">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                    </svg>
                                 </button>
                             </div>
-                            <button class="p-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
-                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                                </svg>
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -370,25 +446,23 @@
                     </div>
                     <div class="border-t border-gray-700 bg-gray-800 p-4">
                         <div class="flex gap-3 items-end">
-                            <button class="p-2 hover:bg-gray-700 rounded-lg transition-colors text-gray-400 hover:text-white">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
-                                </svg>
-                            </button>
                             <div class="flex-1 relative">
                                 <textarea 
                                     placeholder="输入消息..." 
                                     rows="1"
                                     class="w-full bg-gray-700 text-white rounded-lg px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 resize-none"
                                     style="min-height: 88px; max-height: 120px;"></textarea>
+                                <button class="absolute left-3 bottom-3 text-gray-400 hover:text-white transition-colors">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                                    </svg>
+                                </button>
                                 <button class="absolute right-3 bottom-3 text-gray-400 hover:text-white transition-colors">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                    </svg>
                                 </button>
                             </div>
-                            <button class="p-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
-                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                                </svg>
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -496,6 +570,14 @@
                     targetChatContent.classList.remove('hidden');
                 }
             });
+        });
+
+        // 边栏收缩功能
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('sidebar-collapsed');
         });
     </script>
 </body>
