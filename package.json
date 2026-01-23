@@ -1,0 +1,12 @@
+{
+  "name": "automate",
+  "version": "1.0.0",
+  "description": "AutoMate Desktop AI Agent",
+  "scripts": {
+    "build:css": "npx tailwindcss -i prototypes/css/input.css -o prototypes/css/tailwind.css",
+    "watch:css": "npx tailwindcss -i prototypes/css/input.css -o prototypes/css/tailwind.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0"
+  }
+}
