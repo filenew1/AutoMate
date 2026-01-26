@@ -27,7 +27,7 @@ jobs:
       - name: Install additional dependencies
         run: npm install -D tailwindcss postcss autoprefixer
       - name: Initialize Tailwind CSS
-        run: npx tailwindcss init -p
+        run: ./node_modules/.bin/tailwindcss init -p
       - name: Update package.json scripts
         run: |
           npm pkg set scripts.build="vite build"
