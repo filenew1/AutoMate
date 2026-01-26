@@ -15,17 +15,46 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm install
       - name: Initialize Vite + React + TypeScript
-        run: npm create vite@latest . -- --template react-ts
+        run: npm create vite@latest . -- --template react-ts --force
+      - name: Install all dependencies
+        run: npm install
+      - name: Verify package.json type
+        run: |
+          if ! grep -q '"type": "module"' package.json; then
+            npm pkg set type="module"
+          fi
       - name: Install Tauri CLI
         run: npm install -D @tauri-apps/cli
       - name: Initialize Tauri
         run: npx tauri init --force --app-name "AutoMate" --window-title "AutoMate" --frontend-dist "./dist" --dev-url "http://localhost:5173"
       - name: Install additional dependencies
         run: npm install -D tailwindcss postcss autoprefixer
+      - name: Update tailwind.config.js for Vite
+        run: |
+          cat > tailwind.config.js << 'EOF'
+          /** @type {import('tailwindcss').Config} */
+          export default {
+            content: [
+              "./index.html",
+              "./src/**/*.{js,ts,jsx,tsx}",
+            ],
+            theme: {
+              extend: {},
+            },
+            plugins: [],
+          }
+          EOF
+      - name: Create postcss.config.js
+        run: |
+          cat > postcss.config.js << 'EOF'
+          export default {
+            plugins: {
+              tailwindcss: {},
+              autoprefixer: {},
+            },
+          }
+          EOF
       - name: Update package.json scripts
         run: |
           npm pkg set scripts.build="vite build"
@@ -50,7 +79,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
       - run: npm install
       - run: npm run build
       - uses: actions/upload-artifact@v4
@@ -70,7 +98,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
       - name: Download frontend dist
         uses: actions/download-artifact@v4
         with:
@@ -102,7 +129,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
       - name: Download frontend dist
         uses: actions/download-artifact@v4
         with:
