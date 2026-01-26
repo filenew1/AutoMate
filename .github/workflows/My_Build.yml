@@ -26,8 +26,6 @@ jobs:
         run: npx tauri init --force --app-name "AutoMate" --window-title "AutoMate" --frontend-dist "./dist" --dev-url "http://localhost:5173"
       - name: Install additional dependencies
         run: npm install -D tailwindcss postcss autoprefixer
-      - name: Initialize Tailwind CSS
-        run: npx tailwindcss@latest init -p
       - name: Update package.json scripts
         run: |
           npm pkg set scripts.build="vite build"
