@@ -19,20 +19,62 @@
         .scrollbar-thin::-webkit-scrollbar-thumb:hover {
             background: #6b7280;
         }
+        
+        /* 浅色主题滚动条样式 */
+        .light-scrollbar::-webkit-scrollbar-track {
+            background: #e5e7eb;
+        }
+        .light-scrollbar::-webkit-scrollbar-thumb {
+            background: #9ca3af;
+            border-radius: 3px;
+        }
+        .light-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+        
+        /* 浅色主题聊天框滚动条样式 */
+        .light-theme .scrollbar-thin::-webkit-scrollbar-track {
+            background: #e5e7eb;
+        }
+        .light-theme .scrollbar-thin::-webkit-scrollbar-thumb {
+            background: #9ca3af;
+            border-radius: 3px;
+        }
+        .light-theme .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
         .agent-item {
             transition: all 0.2s ease;
         }
+        .agent-item:hover {
+            background: linear-gradient(to right, #f3f4f6, #e5e7eb);
+        }
         .agent-item:active {
             transform: scale(0.98);
+            background: linear-gradient(to right, #e5e7eb, #d1d5db);
         }
         .agent-item.selected {
+            background: linear-gradient(to right, #e0e7ff, #dbeafe);
+        }
+        
+        .dark-theme .agent-item:hover {
+            background: rgba(55, 65, 81, 0.5);
+        }
+        .dark-theme .agent-item:active {
+            transform: scale(0.98);
+            background: rgba(55, 65, 81, 0.7);
+        }
+        .dark-theme .agent-item.selected {
             background: linear-gradient(to right, #2563eb, #3b82f6);
         }
         .group-header {
             transition: all 0.2s ease;
             border-left: 3px solid transparent;
         }
-        .group-header:hover {
+        .light-theme .group-header:hover {
+            background: rgba(229, 231, 235, 0.8);
+        }
+        .dark-theme .group-header:hover {
             background: rgba(55, 65, 81, 0.5);
         }
         .group-header .chevron-icon {
@@ -125,11 +167,88 @@
         }
         
         .sidebar-collapsed .p-4:last-child {
-            padding: 16px !important;
+            padding: 8px !important;
         }
         
         .sidebar-collapsed .p-4:last-child svg {
             margin: 0 auto;
+        }
+        
+        /* 侧边栏收缩时按钮竖向排列 */
+        .sidebar-collapsed .flex.items-center.gap-2 {
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .sidebar-collapsed .flex.items-center.gap-2 button {
+            justify-content: center;
+            padding: 12px;
+            width: 40px;
+            height: 40px;
+        }
+        
+        .sidebar-collapsed .flex.items-center.gap-2 button span {
+            display: none;
+        }
+        
+        .sidebar-collapsed .flex.items-center.gap-4 {
+            display: none;
+        }
+        
+        /* 自定义提示框样式 */
+        .tooltip-container {
+            position: relative;
+        }
+        
+        .tooltip-container .tooltip {
+            position: absolute;
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid #374151;
+            margin-right: 8px;
+            z-index: 1000;
+        }
+        
+        /* 侧边栏收缩时的提示框效果 */
+        #sidebar.sidebar-collapsed .tooltip-container:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .tooltip-container .tooltip::after {
+            content: '';
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            border-width: 4px;
+            border-style: solid;
+            border-color: transparent transparent transparent #1f2937;
+        }
+        
+        /* 侧边栏收缩时的提示框位置 */
+        .sidebar-collapsed .tooltip-container .tooltip {
+            right: auto;
+            left: 100%;
+            margin-right: 0;
+            margin-left: 8px;
+        }
+        
+        .sidebar-collapsed .tooltip-container .tooltip::after {
+            left: auto;
+            right: 100%;
+            border-color: transparent #1f2937 transparent transparent;
         }
         
         /* 发送按钮样式 */
@@ -153,19 +272,19 @@
         }
     </style>
 </head>
-<body class="bg-gray-900 text-white h-screen overflow-hidden">
+<body class="bg-gray-100 text-gray-900 h-screen overflow-hidden light-theme">
     <div class="flex h-full">
         <!-- 左侧边栏 - 智能体列表 -->
-        <aside class="w-80 bg-gray-800 border-r border-gray-700 flex flex-col relative" id="sidebar">
+        <aside class="w-80 bg-white border-r border-gray-300 flex flex-col relative" id="sidebar">
             <!-- 边栏收缩按钮 -->
             <div class="sidebar-toggle" id="sidebarToggle"></div>
             <!-- 搜索框 -->
-            <div class="p-4 border-b border-gray-700 search-container">
+            <div class="p-4 border-b border-gray-200 search-container">
                 <div class="relative">
                     <input type="text" 
                            id="searchInput"
                            placeholder="搜索智能体..." 
-                           class="w-full bg-gray-700 text-white rounded-lg px-4 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400">
+                           class="w-full bg-gray-100 text-gray-900 rounded-lg px-4 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 border border-gray-200">
                     <svg class="absolute left-3 top-2.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
@@ -176,26 +295,25 @@
             <div class="flex-1 overflow-y-auto scrollbar-thin">
                 <!-- 分组 1: 通用助手 -->
                 <div class="mb-2">
-                    <div class="group-header px-4 py-3 bg-gray-700/30 cursor-pointer flex items-center justify-between group" data-group="general">
+                    <div class="group-header px-4 py-3 bg-gray-100 cursor-pointer flex items-center justify-between group" data-group="general">
                         <div class="flex items-center gap-3">
                             <svg class="chevron-icon w-5 h-5 text-gray-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                             </svg>
-                            <span class="text-sm font-semibold text-gray-200">通用助手</span>
-                            <span class="text-xs bg-gray-600 text-gray-300 px-2 py-0.5 rounded-full">1</span>
+                            <span class="text-sm font-semibold text-gray-700">通用助手</span>
                         </div>
                     </div>
 
                     <!-- 智能体列表 -->
                     <div class="group-content space-y-1 expanded">
-                        <div class="agent-item mx-2 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-700 flex items-center gap-3 transition-colors selected" data-agent-id="agent-001" data-agent-name="智能助手" data-agent-avatar="blue">
+                        <div class="agent-item mx-2 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-200 flex items-center gap-3 transition-colors selected" data-agent-id="agent-001" data-agent-name="智能助手" data-agent-avatar="blue">
                             <div class="relative">
                                 <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
                                     <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                     </svg>
                                 </div>
-                                <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></div>
+                                <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
                             </div>
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2">
@@ -210,26 +328,25 @@
 
                 <!-- 分组 2: OA办公系统 -->
                 <div class="mb-2">
-                    <div class="group-header px-4 py-3 bg-gray-700/30 cursor-pointer flex items-center justify-between group" data-group="oa">
+                    <div class="group-header px-4 py-3 bg-gray-100 cursor-pointer flex items-center justify-between group" data-group="oa">
                         <div class="flex items-center gap-3">
                             <svg class="chevron-icon w-5 h-5 text-gray-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                             </svg>
-                            <span class="text-sm font-semibold text-gray-200">OA办公系统</span>
-                            <span class="text-xs bg-gray-600 text-gray-300 px-2 py-0.5 rounded-full">2</span>
+                            <span class="text-sm font-semibold text-gray-700">OA办公系统</span>
                         </div>
                     </div>
 
                     <!-- 智能体列表 -->
                     <div class="group-content space-y-1 expanded">
-                        <div class="agent-item mx-2 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-700 flex items-center gap-3 transition-colors" data-agent-id="agent-002" data-agent-name="代码助手" data-agent-avatar="purple">
+                        <div class="agent-item mx-2 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-200 flex items-center gap-3 transition-colors" data-agent-id="agent-002" data-agent-name="代码助手" data-agent-avatar="purple">
                             <div class="relative">
                                 <div class="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center">
                                     <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
                                     </svg>
                                 </div>
-                                <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></div>
+                                <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
                             </div>
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2">
@@ -240,14 +357,14 @@
                             </div>
                         </div>
 
-                        <div class="agent-item mx-2 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-700 flex items-center gap-3 transition-colors" data-agent-id="agent-003" data-agent-name="待办助手" data-agent-avatar="orange">
+                        <div class="agent-item mx-2 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-200 flex items-center gap-3 transition-colors" data-agent-id="agent-003" data-agent-name="待办助手" data-agent-avatar="orange">
                             <div class="relative">
                                 <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center">
                                     <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                                     </svg>
                                 </div>
-                                <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></div>
+                                <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
                             </div>
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2">
@@ -256,30 +373,48 @@
                                 </div>
                                 <p class="text-xs text-gray-400 truncate">待办事项管理助手</p>
                             </div>
-                            <div class="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
-                                <span class="text-xs font-bold">3</span>
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- 底部设置按钮 -->
-            <div class="p-4 border-t border-gray-700">
-                <button class="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition-colors">
-                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                    </svg>
-                    <span class="text-sm text-gray-300">设置</span>
-                </button>
+            <div class="p-4 border-t border-gray-200 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <div class="tooltip-container">
+                        <button class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                            </svg>
+                            <span class="text-sm text-gray-600">主题</span>
+                        </button>
+                        <div class="tooltip">主题</div>
+                    </div>
+                    <div class="tooltip-container">
+                        <button class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            <span class="text-sm text-gray-600">设置</span>
+                        </button>
+                        <div class="tooltip">设置</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 text-xs text-gray-500">
+                    <span class="flex items-center gap-1">
+                        <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                        在线
+                    </span>
+                    <span>v1.0.0</span>
+                </div>
             </div>
         </aside>
 
         <!-- 主内容区 - 欢迎页 -->
-        <main class="flex-1 flex flex-col bg-gray-900">
+        <main class="flex-1 flex flex-col bg-gray-50">
             <!-- 顶部栏 - 动态更新 -->
-            <header id="mainHeader" class="h-16 border-b border-gray-700 flex items-center justify-between px-6">
+            <header id="mainHeader" class="h-16 border-b border-gray-200 flex items-center justify-between px-6">
                 <div class="flex items-center gap-4">
                     <div id="mainAvatar" class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -312,31 +447,31 @@
                             </svg>
                         </div>
                         <h2 class="text-2xl font-bold mb-3">欢迎使用 AutoMate</h2>
-                        <p class="text-gray-400 mb-6">选择左侧的智能体开始对话，体验智能化的任务处理</p>
+                        <p class="text-gray-600 mb-6">选择左侧的智能体开始对话，体验智能化的任务处理</p>
                         <div class="grid grid-cols-3 gap-4 text-center">
-                            <div class="p-4 bg-gray-800 rounded-lg">
-                                <div class="text-2xl font-bold text-blue-400">3</div>
-                                <div class="text-xs text-gray-400 mt-1">可用智能体</div>
+                            <div class="p-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg shadow-sm">
+                                <div class="text-2xl font-bold text-blue-600">3</div>
+                                <div class="text-xs text-gray-600 mt-1">可用智能体</div>
                             </div>
-                            <div class="p-4 bg-gray-800 rounded-lg">
-                                <div class="text-2xl font-bold text-green-400">9</div>
-                                <div class="text-xs text-gray-400 mt-1">可用技能</div>
+                            <div class="p-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg shadow-sm">
+                                <div class="text-2xl font-bold text-green-600">9</div>
+                                <div class="text-xs text-gray-600 mt-1">可用技能</div>
                             </div>
-                            <div class="p-4 bg-gray-800 rounded-lg">
-                                <div class="text-2xl font-bold text-purple-400">∞</div>
-                                <div class="text-xs text-gray-400 mt-1">对话次数</div>
+                            <div class="p-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg shadow-sm">
+                                <div class="text-2xl font-bold text-purple-600">∞</div>
+                                <div class="text-xs text-gray-600 mt-1">对话次数</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- 智能体聊天窗口 -->
-                <div id="chat-agent-001" class="chat-content-panel h-full flex flex-col bg-gray-900 hidden">
+                <div id="chat-agent-001" class="chat-content-panel h-full flex flex-col bg-gray-50 hidden">
                     <div class="flex-1 overflow-y-auto scrollbar-thin p-6 space-y-6">
                         <div class="flex items-center gap-4">
-                            <div class="flex-1 h-px bg-gray-700"></div>
+                            <div class="flex-1 h-px bg-gray-300"></div>
                             <span class="text-xs text-gray-500">今天</span>
-                            <div class="flex-1 h-px bg-gray-700"></div>
+                            <div class="flex-1 h-px bg-gray-300"></div>
                         </div>
                         <div class="flex justify-end">
                             <div class="max-w-lg">
@@ -356,7 +491,7 @@
                                     </svg>
                                 </div>
                                 <div class="flex-1">
-                                    <div class="bg-gray-800 rounded-2xl rounded-tl-sm px-4 py-3 shadow-lg">
+                                    <div class="bg-gray-200 rounded-2xl rounded-tl-sm px-4 py-3 shadow-lg">
                                         <p class="text-sm">你好！我是智能助手，有什么可以帮助你的吗？</p>
                                     </div>
                                     <div class="text-left mt-1 ml-1">
@@ -366,37 +501,49 @@
                             </div>
                         </div>
                     </div>
-                    <div class="border-t border-gray-700 bg-gray-800 p-4">
-                        <div class="flex gap-3 items-end">
-                            <div class="flex-1 relative">
+                    <div class="border-t border-gray-200 bg-white p-4">
+                        <div class="border border-gray-200 rounded-lg overflow-hidden">
+                            <!-- 附件显示区 -->
+                            <div id="attachments-001" class="flex flex-wrap gap-2 p-2 hidden">
+                                <!-- 附件将在这里动态添加 -->
+                            </div>
+                            <!-- 输入区域 -->
+                            <div class="relative flex flex-grow">
                                 <textarea 
                                     id="message-input-001"
                                     placeholder="输入消息..." 
                                     rows="1"
-                                    class="w-full bg-gray-700 text-white rounded-lg px-4 py-3 pr-10 pb-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 resize-none scrollbar-thin"
-                                    style="min-height: 88px; max-height: 120px;"></textarea>
-                                <button class="absolute left-3 bottom-3 text-gray-400 hover:text-white transition-colors">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
-                                    </svg>
-                                </button>
-                                <button id="send-btn-001" class="absolute right-3 bottom-3 text-gray-400 hover:text-white transition-colors" disabled>
-                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                                    </svg>
-                                </button>
+                                    class="w-full bg-white text-gray-900 px-4 py-3 focus:outline-none placeholder-gray-400 resize-none scrollbar-thin border-none flex-grow"
+                                    style="min-height: 100px; max-height: 300px;"></textarea>
+                            </div>
+                            <!-- 按钮区域 -->
+                            <div class="flex items-center justify-between p-1 bg-gray-50">
+                                <div class="flex items-center gap-2">
+                                    <button id="attach-btn-001" class="p-2 text-gray-400 hover:text-gray-900 transition-colors">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div>
+                                    <button id="send-btn-001" class="p-2 text-gray-400 hover:text-gray-900 transition-colors" disabled>
+                                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- 代码助手聊天窗口 -->
-                <div id="chat-agent-002" class="chat-content-panel h-full flex flex-col bg-gray-900 hidden">
+                <div id="chat-agent-002" class="chat-content-panel h-full flex flex-col bg-gray-50 hidden">
                     <div class="flex-1 overflow-y-auto scrollbar-thin p-6 space-y-6">
                         <div class="flex items-center gap-4">
-                            <div class="flex-1 h-px bg-gray-700"></div>
+                            <div class="flex-1 h-px bg-gray-300"></div>
                             <span class="text-xs text-gray-500">今天</span>
-                            <div class="flex-1 h-px bg-gray-700"></div>
+                            <div class="flex-1 h-px bg-gray-300"></div>
                         </div>
                         <div class="flex justify-start">
                             <div class="flex gap-3 max-w-lg">
@@ -406,7 +553,7 @@
                                     </svg>
                                 </div>
                                 <div class="flex-1">
-                                    <div class="bg-gray-800 rounded-2xl rounded-tl-sm px-4 py-3 shadow-lg">
+                                    <div class="bg-gray-200 rounded-2xl rounded-tl-sm px-4 py-3 shadow-lg">
                                         <p class="text-sm">你好！我是代码助手，我可以帮你生成、调试和优化代码。</p>
                                     </div>
                                     <div class="text-left mt-1 ml-1">
@@ -416,37 +563,49 @@
                             </div>
                         </div>
                     </div>
-                    <div class="border-t border-gray-700 bg-gray-800 p-4">
-                        <div class="flex gap-3 items-end">
-                            <div class="flex-1 relative">
+                    <div class="border-t border-gray-200 bg-white p-4">
+                        <div class="border border-gray-200 rounded-lg overflow-hidden">
+                            <!-- 附件显示区 -->
+                            <div id="attachments-002" class="flex flex-wrap gap-2 p-2 hidden">
+                                <!-- 附件将在这里动态添加 -->
+                            </div>
+                            <!-- 输入区域 -->
+                            <div class="relative flex flex-grow">
                                 <textarea 
                                     id="message-input-002"
                                     placeholder="输入消息..." 
                                     rows="1"
-                                    class="w-full bg-gray-700 text-white rounded-lg px-4 py-3 pr-10 pb-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 resize-none scrollbar-thin"
-                                    style="min-height: 88px; max-height: 120px;"></textarea>
-                                <button class="absolute left-3 bottom-3 text-gray-400 hover:text-white transition-colors">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
-                                    </svg>
-                                </button>
-                                <button id="send-btn-002" class="absolute right-3 bottom-3 text-gray-400 hover:text-white transition-colors" disabled>
-                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                                    </svg>
-                                </button>
+                                    class="w-full bg-white text-gray-900 px-4 py-3 focus:outline-none placeholder-gray-400 resize-none scrollbar-thin border-none flex-grow"
+                                    style="min-height: 100px; max-height: 300px;"></textarea>
+                            </div>
+                            <!-- 按钮区域 -->
+                            <div class="flex items-center justify-between p-1 bg-gray-50">
+                                <div class="flex items-center gap-2">
+                                    <button id="attach-btn-002" class="p-2 text-gray-400 hover:text-gray-900 transition-colors">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div>
+                                    <button id="send-btn-002" class="p-2 text-gray-400 hover:text-gray-900 transition-colors" disabled>
+                                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- 待办助手聊天窗口 -->
-                <div id="chat-agent-003" class="chat-content-panel h-full flex flex-col bg-gray-900 hidden">
+                <div id="chat-agent-003" class="chat-content-panel h-full flex flex-col bg-gray-50 hidden">
                     <div class="flex-1 overflow-y-auto scrollbar-thin p-6 space-y-6">
                         <div class="flex items-center gap-4">
-                            <div class="flex-1 h-px bg-gray-700"></div>
+                            <div class="flex-1 h-px bg-gray-300"></div>
                             <span class="text-xs text-gray-500">今天</span>
-                            <div class="flex-1 h-px bg-gray-700"></div>
+                            <div class="flex-1 h-px bg-gray-300"></div>
                         </div>
                         <div class="flex justify-start">
                             <div class="flex gap-3 max-w-lg">
@@ -456,7 +615,7 @@
                                     </svg>
                                 </div>
                                 <div class="flex-1">
-                                    <div class="bg-gray-800 rounded-2xl rounded-tl-sm px-4 py-3 shadow-lg">
+                                    <div class="bg-gray-200 rounded-2xl rounded-tl-sm px-4 py-3 shadow-lg">
                                         <p class="text-sm">你好！我是待办助手，我可以帮你管理待办事项。</p>
                                     </div>
                                     <div class="text-left mt-1 ml-1">
@@ -466,42 +625,44 @@
                             </div>
                         </div>
                     </div>
-                    <div class="border-t border-gray-700 bg-gray-800 p-4">
-                        <div class="flex gap-3 items-end">
-                            <div class="flex-1 relative">
+                    <div class="border-t border-gray-200 bg-white p-4">
+                        <div class="border border-gray-200 rounded-lg overflow-hidden">
+                            <!-- 附件显示区 -->
+                            <div id="attachments-003" class="flex flex-wrap gap-2 p-2 hidden">
+                                <!-- 附件将在这里动态添加 -->
+                            </div>
+                            <!-- 输入区域 -->
+                            <div class="relative flex flex-grow">
                                 <textarea 
                                     id="message-input-003"
                                     placeholder="输入消息..." 
                                     rows="1"
-                                    class="w-full bg-gray-700 text-white rounded-lg px-4 py-3 pr-10 pb-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 resize-none scrollbar-thin"
-                                    style="min-height: 88px; max-height: 120px;"></textarea>
-                                <button class="absolute left-3 bottom-3 text-gray-400 hover:text-white transition-colors">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
-                                    </svg>
-                                </button>
-                                <button id="send-btn-003" class="absolute right-3 bottom-3 text-gray-400 hover:text-white transition-colors" disabled>
-                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                                    </svg>
-                                </button>
+                                    class="w-full bg-white text-gray-900 px-4 py-3 focus:outline-none placeholder-gray-400 resize-none scrollbar-thin border-none flex-grow"
+                                    style="min-height: 100px; max-height: 300px;"></textarea>
+                            </div>
+                            <!-- 按钮区域 -->
+                            <div class="flex items-center justify-between p-1 bg-gray-50">
+                                <div class="flex items-center gap-2">
+                                    <button id="attach-btn-003" class="p-2 text-gray-400 hover:text-gray-900 transition-colors">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div>
+                                    <button id="send-btn-003" class="p-2 text-gray-400 hover:text-gray-900 transition-colors" disabled>
+                                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 状态栏 -->
-            <footer class="h-8 border-t border-gray-700 flex items-center justify-between px-4 text-xs text-gray-500">
-                <div class="flex items-center gap-4">
-                    <span class="flex items-center gap-1">
-                        <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-                        在线
-                    </span>
-                    <span>v1.0.0</span>
-                </div>
-                <div>AutoMate © 2024</div>
-            </footer>
+
         </main>
     </div>
 
@@ -602,6 +763,547 @@
         sidebarToggle.addEventListener('click', function() {
             sidebar.classList.toggle('sidebar-collapsed');
         });
+        
+        // 主题切换功能
+        const themeButton = document.querySelector('.tooltip-container:first-child button');
+        const body = document.body;
+        
+        // 初始化主题
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            setTheme(savedTheme);
+        }
+        
+        // 设置主题
+        function setTheme(theme) {
+            if (theme === 'dark') {
+                body.classList.remove('light-theme');
+                body.classList.add('dark-theme');
+                body.className = 'bg-gray-900 text-white h-screen overflow-hidden dark-theme';
+                
+                // 侧边栏
+                document.getElementById('sidebar').className = 'w-80 bg-gray-800 border-r border-gray-700 flex flex-col relative';
+                document.querySelector('.search-container').className = 'p-4 border-b border-gray-700 search-container';
+                document.querySelector('input#searchInput').className = 'w-full bg-gray-700 text-white rounded-lg px-4 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400';
+                
+                // 分组头部
+                document.querySelectorAll('.group-header').forEach(header => {
+                    header.className = 'group-header px-4 py-3 bg-gray-700/30 cursor-pointer flex items-center justify-between group';
+                    const title = header.querySelector('.text-sm');
+                    if (title) {
+                        title.className = 'text-sm font-semibold text-gray-200';
+                    }
+                });
+                
+                // 智能体项
+                document.querySelectorAll('.agent-item').forEach(item => {
+                    item.className = item.className.replace('hover:bg-gray-200', 'hover:bg-gray-700');
+                });
+                
+                // 底部设置
+                document.querySelector('.border-t.border-gray-200').className = 'p-4 border-t border-gray-700 flex items-center justify-between';
+                document.querySelectorAll('.tooltip-container button').forEach(btn => {
+                    btn.className = 'flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-700 transition-colors';
+                    const span = btn.querySelector('.text-sm');
+                    if (span) {
+                        span.className = 'text-sm text-gray-300';
+                    }
+                });
+                
+                // 更新主题按钮图标为月亮
+                const themeSvg = themeButton.querySelector('svg');
+                if (themeSvg) {
+                    themeSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>';
+                    themeSvg.className = 'w-4 h-4 text-gray-300';
+                }
+                
+                // 主内容区
+                document.querySelector('main').className = 'flex-1 flex flex-col bg-gray-900';
+                document.getElementById('mainHeader').className = 'h-16 border-b border-gray-700 flex items-center justify-between px-6';
+                
+                // 聊天窗口
+                document.querySelectorAll('.chat-content-panel').forEach(panel => {
+                    panel.className = 'chat-content-panel h-full flex flex-col bg-gray-900 hidden';
+                });
+                
+                // 聊天窗口分割线
+                document.querySelectorAll('.chat-content-panel .h-px').forEach(line => {
+                    line.className = 'flex-1 h-px bg-gray-700';
+                });
+                
+                // 智能助手消息
+                document.querySelectorAll('.chat-content-panel .bg-gray-200').forEach(msg => {
+                    msg.className = 'bg-gray-800 rounded-2xl rounded-tl-sm px-4 py-3 shadow-lg';
+                    const p = msg.querySelector('p');
+                    if (p) {
+                        p.className = 'text-sm';
+                    }
+                });
+                
+                // 用户消息
+                document.querySelectorAll('.chat-content-panel .bg-blue-100').forEach(msg => {
+                    msg.className = 'bg-blue-600 rounded-2xl rounded-tr-sm px-4 py-3 shadow-lg';
+                    const p = msg.querySelector('p');
+                    if (p) {
+                        p.className = 'text-sm';
+                    }
+                });
+                
+                // 输入区域
+                document.querySelectorAll('.chat-content-panel .border-t.border-gray-200').forEach(inputArea => {
+                    inputArea.className = 'border-t border-gray-700 bg-gray-800 p-4';
+                });
+                
+                // 输入框
+                document.querySelectorAll('textarea').forEach(textarea => {
+                    textarea.className = 'w-full bg-gray-700 text-white px-4 py-3 pr-10 focus:outline-none placeholder-gray-400 resize-none scrollbar-thin flex-grow';
+                });
+                
+                // 按钮区域背景颜色（深色主题）
+                document.querySelectorAll('.chat-content-panel .flex.items-center.justify-between').forEach(btnArea => {
+                    btnArea.className = 'flex items-center justify-between p-1 bg-gray-700';
+                });
+                
+                // 附件容器背景色（深色主题）
+                document.querySelectorAll('#attachments-001, #attachments-002, #attachments-003').forEach(container => {
+                    container.className = 'flex flex-wrap gap-2 p-2 bg-gray-700 hidden';
+                });
+                
+                // 附件样式（深色主题）
+                document.querySelectorAll('#attachments-001 div, #attachments-002 div, #attachments-003 div').forEach(attachment => {
+                    if (attachment.classList.contains('flex') && attachment.classList.contains('items-center')) {
+                        attachment.className = 'flex items-center gap-2 px-3 py-2 bg-gray-700 rounded-full text-sm border border-gray-600';
+                        const fileIcon = attachment.querySelector('.bg-gray-200, .bg-gray-600');
+                        if (fileIcon) {
+                            if (fileIcon.querySelector('img')) {
+                                // 图片预览
+                                fileIcon.className = 'w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center overflow-hidden cursor-pointer';
+                            } else {
+                                // 文件图标
+                                fileIcon.className = 'w-6 h-6 bg-gray-600 rounded-full flex items-center justify-center';
+                                const iconSvg = fileIcon.querySelector('svg');
+                                if (iconSvg) {
+                                    iconSvg.className = 'w-4 h-4 text-gray-300';
+                                }
+                            }
+                        }
+                        const fileSize = attachment.querySelector('.text-xs');
+                        if (fileSize) {
+                            fileSize.className = 'text-xs text-gray-400';
+                        }
+                        const deleteBtn = attachment.querySelector('button');
+                        if (deleteBtn) {
+                            deleteBtn.className = 'p-1 text-gray-400 hover:text-gray-300 transition-colors';
+                            const deleteSvg = deleteBtn.querySelector('svg');
+                            if (deleteSvg) {
+                                deleteSvg.className = 'w-4 h-4';
+                            }
+                        }
+                    }
+                });
+                
+                // 图标颜色
+                document.querySelectorAll('.chat-content-panel button').forEach(btn => {
+                    btn.className = btn.className.replace('hover:text-gray-900', 'hover:text-white');
+                });
+                
+                // 用户头像样式
+                const userAvatar = document.querySelector('.flex.items-center.gap-3 .w-8.h-8');
+                if (userAvatar) {
+                    userAvatar.className = 'w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center';
+                    const avatarBackground = userAvatar.querySelector('div');
+                    if (avatarBackground) {
+                        avatarBackground.className = 'w-6 h-6 bg-gray-700 rounded-full flex items-center justify-center';
+                        const userAvatarIcon = avatarBackground.querySelector('svg');
+                        if (userAvatarIcon) {
+                            userAvatarIcon.className = 'w-4 h-4 text-gray-300';
+                        }
+                    }
+                }
+                
+
+                
+                // 欢迎页面统计卡片
+                const welcomeStats = document.querySelectorAll('#welcomeContent .grid-cols-3 .p-4');
+                welcomeStats.forEach(card => {
+                    card.className = 'p-4 bg-gray-800 rounded-lg';
+                    const number = card.querySelector('.text-2xl');
+                    if (number) {
+                        number.className = number.className.replace('text-blue-600', 'text-blue-400').replace('text-green-600', 'text-green-400').replace('text-purple-600', 'text-purple-400');
+                    }
+                    const label = card.querySelector('.text-xs');
+                    if (label) {
+                        label.className = 'text-xs text-gray-400 mt-1';
+                    }
+                });
+                
+                // 欢迎页面描述文本
+                const welcomeDescription = document.querySelector('#welcomeContent p.text-gray-600');
+                if (welcomeDescription) {
+                    welcomeDescription.className = 'text-gray-400 mb-6';
+                }
+                
+            } else {
+                body.classList.remove('dark-theme');
+                body.classList.add('light-theme');
+                body.className = 'bg-gray-100 text-gray-900 h-screen overflow-hidden light-theme';
+                
+                // 侧边栏
+                document.getElementById('sidebar').className = 'w-80 bg-white border-r border-gray-300 flex flex-col relative';
+                document.querySelector('.search-container').className = 'p-4 border-b border-gray-200 search-container';
+                document.querySelector('input#searchInput').className = 'w-full bg-gray-100 text-gray-900 rounded-lg px-4 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 border border-gray-200';
+                
+                // 分组头部
+                document.querySelectorAll('.group-header').forEach(header => {
+                    header.className = 'group-header px-4 py-3 bg-gray-100 cursor-pointer flex items-center justify-between group';
+                    const title = header.querySelector('.text-sm');
+                    if (title) {
+                        title.className = 'text-sm font-semibold text-gray-700';
+                    }
+                });
+                
+                // 智能体项
+                document.querySelectorAll('.agent-item').forEach(item => {
+                    item.className = item.className.replace('hover:bg-gray-700', 'hover:bg-gray-200');
+                });
+                
+                // 底部设置
+                const bottomSettings = document.querySelector('.p-4.border-t');
+                if (bottomSettings) {
+                    bottomSettings.className = 'p-4 border-t border-gray-200 flex items-center justify-between';
+                }
+                document.querySelectorAll('.tooltip-container button').forEach(btn => {
+                    btn.className = 'flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-200 transition-colors';
+                    const span = btn.querySelector('.text-sm');
+                    if (span) {
+                        span.className = 'text-sm text-gray-600';
+                    }
+                });
+                
+                // 更新主题按钮图标为太阳
+                const themeSvg = themeButton.querySelector('svg');
+                if (themeSvg) {
+                    themeSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>';
+                    themeSvg.className = 'w-4 h-4 text-gray-400';
+                }
+                
+                // 主内容区
+                document.querySelector('main').className = 'flex-1 flex flex-col bg-gray-50';
+                document.getElementById('mainHeader').className = 'h-16 border-b border-gray-200 flex items-center justify-between px-6';
+                
+                // 聊天窗口
+                document.querySelectorAll('.chat-content-panel').forEach(panel => {
+                    panel.className = 'chat-content-panel h-full flex flex-col bg-gray-50 hidden';
+                });
+                
+                // 聊天窗口分割线
+                document.querySelectorAll('.chat-content-panel .h-px').forEach(line => {
+                    line.className = 'flex-1 h-px bg-gray-300';
+                });
+                
+                // 智能助手消息
+                document.querySelectorAll('.chat-content-panel .bg-gray-800').forEach(msg => {
+                    msg.className = 'bg-gray-200 rounded-2xl rounded-tl-sm px-4 py-3 shadow-lg';
+                    const p = msg.querySelector('p');
+                    if (p) {
+                        p.className = 'text-sm text-gray-900';
+                    }
+                });
+                
+                // 用户消息
+                document.querySelectorAll('.chat-content-panel .bg-blue-600').forEach(msg => {
+                    msg.className = 'bg-blue-100 rounded-2xl rounded-tr-sm px-4 py-3 shadow-lg';
+                    const p = msg.querySelector('p');
+                    if (p) {
+                        p.className = 'text-sm text-gray-900';
+                    }
+                });
+                
+                // 输入区域
+                document.querySelectorAll('.chat-content-panel .border-t.border-gray-700').forEach(inputArea => {
+                    inputArea.className = 'border-t border-gray-200 bg-white p-4';
+                });
+                
+                // 输入框
+                document.querySelectorAll('textarea').forEach(textarea => {
+                    textarea.className = 'w-full bg-gray-100 text-gray-900 px-4 py-3 pr-10 focus:outline-none placeholder-gray-400 resize-none scrollbar-thin light-scrollbar flex-grow';
+                });
+                
+                // 图标颜色
+                document.querySelectorAll('.chat-content-panel button').forEach(btn => {
+                    btn.className = btn.className.replace('hover:text-white', 'hover:text-gray-900');
+                });
+                
+                // 按钮区域背景颜色（浅色主题）
+                document.querySelectorAll('.chat-content-panel .flex.items-center.justify-between').forEach(btnArea => {
+                    btnArea.className = 'flex items-center justify-between p-1 bg-gray-50';
+                });
+                
+                // 附件样式（浅色主题）
+                document.querySelectorAll('#attachments-001 div, #attachments-002 div, #attachments-003 div').forEach(attachment => {
+                    if (attachment.classList.contains('flex') && attachment.classList.contains('items-center')) {
+                        attachment.className = 'flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-full text-sm border border-gray-200';
+                        const fileIcon = attachment.querySelector('.bg-gray-600, .bg-gray-200');
+                        if (fileIcon) {
+                            if (fileIcon.querySelector('img')) {
+                                // 图片预览
+                                fileIcon.className = 'w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden cursor-pointer';
+                            } else {
+                                // 文件图标
+                                fileIcon.className = 'w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center';
+                                const iconSvg = fileIcon.querySelector('svg');
+                                if (iconSvg) {
+                                    iconSvg.className = 'w-4 h-4 text-gray-600';
+                                }
+                            }
+                        }
+                        const fileSize = attachment.querySelector('.text-xs');
+                        if (fileSize) {
+                            fileSize.className = 'text-xs text-gray-500';
+                        }
+                        const deleteBtn = attachment.querySelector('button');
+                        if (deleteBtn) {
+                            deleteBtn.className = 'p-1 text-gray-400 hover:text-gray-600 transition-colors';
+                            const deleteSvg = deleteBtn.querySelector('svg');
+                            if (deleteSvg) {
+                                deleteSvg.className = 'w-4 h-4';
+                            }
+                        }
+                    }
+                });
+                
+                // 用户头像样式
+                const userAvatar = document.querySelector('.flex.items-center.gap-3 .w-8.h-8');
+                if (userAvatar) {
+                    userAvatar.className = 'w-8 h-8 bg-gray-100 border border-gray-300 rounded-full flex items-center justify-center';
+                    const userAvatarIcon = userAvatar.querySelector('svg');
+                    if (userAvatarIcon) {
+                        // 创建一个新的div作为头像背景
+                        const avatarBackground = document.createElement('div');
+                        avatarBackground.className = 'w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center';
+                        // 将svg移动到新的div中
+                        avatarBackground.appendChild(userAvatarIcon);
+                        // 清空原div并添加新的div
+                        userAvatar.innerHTML = '';
+                        userAvatar.appendChild(avatarBackground);
+                        // 修改svg样式
+                        userAvatarIcon.className = 'w-4 h-4 text-gray-600';
+                    }
+                }
+                
+
+                
+                // 欢迎页面统计卡片
+                const welcomeStats = document.querySelectorAll('#welcomeContent .grid-cols-3 .p-4');
+                welcomeStats.forEach(card => {
+                    card.className = 'p-4 bg-gray-100 border border-gray-200 rounded-lg';
+                    const number = card.querySelector('.text-2xl');
+                    if (number) {
+                        number.className = number.className.replace('text-blue-400', 'text-blue-600').replace('text-green-400', 'text-green-600').replace('text-purple-400', 'text-purple-600');
+                    }
+                    const label = card.querySelector('.text-xs');
+                    if (label) {
+                        label.className = 'text-xs text-gray-600 mt-1';
+                    }
+                });
+                
+                // 欢迎页面描述文本
+                const welcomeDescription = document.querySelector('#welcomeContent p.text-gray-400');
+                if (welcomeDescription) {
+                    welcomeDescription.className = 'text-gray-600 mb-6';
+                }
+            }
+            
+            localStorage.setItem('theme', theme);
+        }
+        
+        // 主题按钮点击事件
+        if (themeButton) {
+            themeButton.addEventListener('click', function() {
+                const currentTheme = body.classList.contains('dark-theme') ? 'dark' : 'light';
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                setTheme(newTheme);
+            });
+        }
+        
+        // 初始化主题
+        initTheme();
+        
+        // 实现输入框动态高度调整
+        function adjustTextareaHeight(textarea) {
+            textarea.style.height = 'auto';
+            const scrollHeight = textarea.scrollHeight;
+            const minHeight = 100;
+            const maxHeight = 300;
+            
+            if (scrollHeight < minHeight) {
+                textarea.style.height = `${minHeight}px`;
+            } else if (scrollHeight > maxHeight) {
+                textarea.style.height = `${maxHeight}px`;
+            } else {
+                textarea.style.height = `${scrollHeight}px`;
+            }
+        }
+        
+        // 为所有输入框添加事件监听器
+        const textareas = document.querySelectorAll('textarea[id^="message-input-"]');
+        textareas.forEach(textarea => {
+            // 初始化高度
+            adjustTextareaHeight(textarea);
+            
+            // 添加输入事件监听器
+            textarea.addEventListener('input', function() {
+                adjustTextareaHeight(this);
+            });
+            
+            // 添加粘贴事件监听器
+            textarea.addEventListener('paste', function() {
+                setTimeout(() => {
+                    adjustTextareaHeight(this);
+                }, 0);
+            });
+        });
+        
+        // 实现附件上传功能
+        function initAttachmentUpload() {
+            // 创建一个隐藏的文件输入元素
+            let fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.multiple = true;
+            fileInput.style.display = 'none';
+            document.body.appendChild(fileInput);
+            
+            // 为所有附件按钮添加点击事件
+            const attachButtons = document.querySelectorAll('button[id^="attach-btn-"]');
+            attachButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const chatId = this.id.split('-')[2];
+                    fileInput.dataset.chatId = chatId;
+                    fileInput.click();
+                });
+            });
+            
+            // 处理文件选择
+            fileInput.addEventListener('change', function() {
+                const chatId = this.dataset.chatId;
+                const attachmentsContainer = document.getElementById(`attachments-${chatId}`);
+                
+                if (this.files && this.files.length > 0) {
+                    // 显示附件容器
+                    attachmentsContainer.classList.remove('hidden');
+                    
+                    // 处理每个选中的文件
+                    Array.from(this.files).forEach(file => {
+                        // 创建附件元素
+                        const attachmentElement = document.createElement('div');
+                        attachmentElement.className = 'flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-full text-sm border border-gray-200';
+                        
+                        // 检测是否为图片文件
+                        const isImage = file.type.startsWith('image/');
+                        let fileIcon;
+                        
+                        if (isImage) {
+                            // 创建图片预览
+                            fileIcon = document.createElement('div');
+                            fileIcon.className = 'w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden cursor-pointer';
+                            
+                            const imgPreview = document.createElement('img');
+                            imgPreview.className = 'w-full h-full object-cover';
+                            imgPreview.src = URL.createObjectURL(file);
+                            
+                            // 添加点击放大查看功能
+                            imgPreview.addEventListener('click', function() {
+                                // 创建放大预览容器
+                                const previewContainer = document.createElement('div');
+                                previewContainer.className = 'fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50';
+                                
+                                // 创建放大的图片
+                                const largeImg = document.createElement('img');
+                                largeImg.className = 'max-w-[90vw] max-h-[90vh] object-contain';
+                                largeImg.src = URL.createObjectURL(file);
+                                
+                                // 创建关闭按钮
+                                const closeBtn = document.createElement('button');
+                                closeBtn.className = 'absolute top-4 right-4 text-white text-2xl';
+                                closeBtn.textContent = '×';
+                                closeBtn.addEventListener('click', function() {
+                                    document.body.removeChild(previewContainer);
+                                });
+                                
+                                // 点击空白处关闭
+                                previewContainer.addEventListener('click', function(e) {
+                                    if (e.target === previewContainer) {
+                                        document.body.removeChild(previewContainer);
+                                    }
+                                });
+                                
+                                // 组装预览容器
+                                previewContainer.appendChild(largeImg);
+                                previewContainer.appendChild(closeBtn);
+                                document.body.appendChild(previewContainer);
+                            });
+                            
+                            fileIcon.appendChild(imgPreview);
+                        } else {
+                            // 创建文件图标
+                            fileIcon = document.createElement('div');
+                            fileIcon.className = 'w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center';
+                            fileIcon.innerHTML = '<svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>';
+                        }
+                        
+                        // 创建文件名称
+                        const fileName = document.createElement('span');
+                        fileName.className = 'truncate max-w-[150px]';
+                        // 限制文件名长度为10个字符
+                        const displayName = file.name.length > 10 ? file.name.substring(0, 10) + '...' : file.name;
+                        fileName.textContent = displayName;
+                        
+                        // 创建文件大小
+                        const fileSize = document.createElement('span');
+                        fileSize.className = 'text-xs text-gray-500';
+                        fileSize.textContent = formatFileSize(file.size);
+                        
+                        // 创建删除按钮
+                        const deleteButton = document.createElement('button');
+                        deleteButton.className = 'p-1 text-gray-400 hover:text-gray-600 transition-colors';
+                        deleteButton.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>';
+                        
+                        // 添加删除按钮点击事件
+                        deleteButton.addEventListener('click', function() {
+                            attachmentElement.remove();
+                            // 如果没有附件了，隐藏附件容器
+                            if (attachmentsContainer.children.length === 0) {
+                                attachmentsContainer.classList.add('hidden');
+                            }
+                        });
+                        
+                        // 组装附件元素
+                        attachmentElement.appendChild(fileIcon);
+                        attachmentElement.appendChild(fileName);
+                        attachmentElement.appendChild(fileSize);
+                        attachmentElement.appendChild(deleteButton);
+                        
+                        // 添加到附件容器
+                        attachmentsContainer.appendChild(attachmentElement);
+                    });
+                    
+                    // 清空文件输入，以便可以再次选择相同的文件
+                    this.value = '';
+                }
+            });
+        }
+        
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // 初始化附件上传功能
+        initAttachmentUpload();
 
         // 随机回复内容库
         const randomResponses = {
@@ -658,14 +1360,21 @@
             const chatPanel = document.getElementById(chatPanelId);
             const messageContainer = chatPanel.querySelector('.flex-1.overflow-y-auto');
             
+            // 获取当前主题
+            const currentTheme = document.body.classList.contains('dark-theme') ? 'dark' : 'light';
+            
             const messageElement = document.createElement('div');
             messageElement.className = `flex ${isUser ? 'justify-end' : 'justify-start'} mb-6`;
             
             if (isUser) {
+                // 根据当前主题设置用户消息气泡样式
+                const userMessageBg = currentTheme === 'light' ? 'bg-blue-100' : 'bg-blue-600';
+                const userMessageText = currentTheme === 'light' ? 'text-gray-900' : '';
+                
                 messageElement.innerHTML = `
                     <div class="max-w-lg">
-                        <div class="bg-blue-600 rounded-2xl rounded-tr-sm px-4 py-3 shadow-lg">
-                            <p class="text-sm">${message}</p>
+                        <div class="${userMessageBg} rounded-2xl rounded-tr-sm px-4 py-3 shadow-lg">
+                            <p class="text-sm ${userMessageText}">${message}</p>
                         </div>
                         <div class="text-right mt-1">
                             <span class="text-xs text-gray-500">${getCurrentTime()}</span>
@@ -687,14 +1396,18 @@
                     avatarIcon = '<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>';
                 }
                 
+                // 根据当前主题设置智能助手消息气泡样式
+                const assistantMessageBg = currentTheme === 'light' ? 'bg-gray-200' : 'bg-gray-800';
+                const assistantMessageText = currentTheme === 'light' ? 'text-gray-900' : '';
+                
                 messageElement.innerHTML = `
                     <div class="flex gap-3 max-w-lg">
                         <div class="w-8 h-8 bg-gradient-to-br from-${avatarColor}-400 to-${avatarColor}-600 rounded-full flex items-center justify-center flex-shrink-0">
                             ${avatarIcon}
                         </div>
                         <div class="flex-1">
-                            <div class="bg-gray-800 rounded-2xl rounded-tl-sm px-4 py-3 shadow-lg">
-                                <p class="text-sm">${message}</p>
+                            <div class="${assistantMessageBg} rounded-2xl rounded-tl-sm px-4 py-3 shadow-lg">
+                                <p class="text-sm ${assistantMessageText}">${message}</p>
                             </div>
                             <div class="text-left mt-1 ml-1">
                                 <span class="text-xs text-gray-500">${getCurrentTime()}</span>
@@ -745,6 +1458,27 @@
                         
                         // 清空输入框
                         input.value = '';
+                        
+                        // 重置输入框高度为默认大小
+                        adjustTextareaHeight(input);
+                        
+                        // 清空附件列表
+                        try {
+                            const activeAgent = document.querySelector('.agent-item.selected');
+                            if (activeAgent) {
+                                const agentId = activeAgent.dataset.agentId;
+                                const attachmentsId = `attachments-${agentId.split('-')[1]}`;
+                                const attachmentsContainer = document.getElementById(attachmentsId);
+                                if (attachmentsContainer) {
+                                    // 清空附件容器
+                                    attachmentsContainer.innerHTML = '';
+                                    // 隐藏附件容器
+                                    attachmentsContainer.classList.add('hidden');
+                                }
+                            }
+                        } catch (error) {
+                            console.error('清空附件列表时出错:', error);
+                        }
                         
                         // 更新发送按钮状态
                         updateButtonStatus();
