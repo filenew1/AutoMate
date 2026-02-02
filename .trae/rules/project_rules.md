@@ -5,6 +5,7 @@
 - TypeScript：5.0.0+（提供类型安全）
 - Tailwind CSS：3.3.0+（用于快速构建响应式UI）
 - Vite：4.4.0+（作为构建工具，Tauri推荐使用Vite）
+- 改完后需要使用 @[ui-ux-pro-max] 进行更新UI组件
 
 ## 后端技术栈
 - Tauri：1.5.0+（基于Rust的桌面应用框架）
