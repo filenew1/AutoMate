@@ -6,7 +6,7 @@
         {
           "id": "agent-001",
           "name": "智能助手",
-          "description": "通用智能助手",
+          "description": "你好！我是智能助手，我可以帮你管理待办事项。",
           "avatar": "avatar-1.png",
           "type": "general",
           "config": {
@@ -46,7 +46,7 @@
         {
           "id": "agent-002",
           "name": "代码助手",
-          "description": "代码生成和调试助手",
+          "description": "你好！我是代码助手，我可以帮你管理待办事项。",
           "avatar": "avatar-2.png",
           "type": "code",
           "config": {
@@ -81,7 +81,7 @@
         {
           "id": "agent-003",
           "name": "待办助手",
-          "description": "待办事项管理助手",
+          "description": "你好！我是待办助手，我可以帮你管理待办事项-1。。。。。",
           "avatar": "avatar-3.png",
           "type": "todo",
           "config": {

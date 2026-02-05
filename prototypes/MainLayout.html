@@ -1053,15 +1053,15 @@
                         <p class="text-gray-600 mb-6">选择左侧的智能体开始对话，体验智能化的任务处理</p>
                         <div class="grid grid-cols-3 gap-4 text-center">
                             <div class="p-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg shadow-sm">
-                                <div class="text-2xl font-bold text-blue-600">3</div>
+                                <div id="total-agents" class="text-2xl font-bold text-blue-600">3</div>
                                 <div class="text-xs text-gray-600 mt-1">可用智能体</div>
                             </div>
                             <div class="p-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg shadow-sm">
-                                <div class="text-2xl font-bold text-green-600">9</div>
+                                <div id="total-skills" class="text-2xl font-bold text-green-600">9</div>
                                 <div class="text-xs text-gray-600 mt-1">可用技能</div>
                             </div>
                             <div class="p-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg shadow-sm">
-                                <div class="text-2xl font-bold text-purple-600">∞</div>
+                                <div id="total-chats" class="text-2xl font-bold text-purple-600">∞</div>
                                 <div class="text-xs text-gray-600 mt-1">对话次数</div>
                             </div>
                         </div>
@@ -1112,7 +1112,7 @@
                                 </div>
                                 <div class="flex-1">
                                     <div class="bg-gray-200 rounded-2xl rounded-tl-sm px-4 py-3 shadow-lg">
-                                        <p class="text-sm">你好！我是智能助手，有什么可以帮助你的吗？</p>
+                                        <p id="greeting-agent-001" class="text-sm"></p>
                                     </div>
                                     <div class="text-left mt-1 ml-1">
                                         <span class="text-xs text-gray-500">14:31</span>
@@ -1175,7 +1175,7 @@
                                 </div>
                                 <div class="flex-1">
                                     <div class="bg-gray-200 rounded-2xl rounded-tl-sm px-4 py-3 shadow-lg">
-                                        <p class="text-sm">你好！我是代码助手，我可以帮你生成、调试和优化代码。</p>
+                                        <p id="greeting-agent-002" class="text-sm"></p>
                                     </div>
                                     <div class="text-left mt-1 ml-1">
                                         <span class="text-xs text-gray-500">14:32</span>
@@ -1238,7 +1238,7 @@
                                 </div>
                                 <div class="flex-1">
                                     <div class="bg-gray-200 rounded-2xl rounded-tl-sm px-4 py-3 shadow-lg">
-                                        <p class="text-sm">你好！我是待办助手，我可以帮你管理待办事项。</p>
+                                        <p id="greeting-agent-003" class="text-sm"></p>
                                     </div>
                                     <div class="text-left mt-1 ml-1">
                                         <span class="text-xs text-gray-500">14:33</span>
@@ -1560,6 +1560,8 @@
                 })
                 .then(data => {
                     renderAgentList(data.agents);
+                    updateStats(data.agents);
+                    updateGreetings(data.agents);
                 })
                 .catch(error => {
                     console.error('Error loading agents config:', error);
@@ -1573,6 +1575,36 @@
                         </div>
                     `;
                 });
+        }
+
+        // 更新统计信息
+        function updateStats(agentsData) {
+            // 计算可用智能体数量
+            const totalAgents = agentsData.reduce((count, group) => count + group.agents.length, 0);
+            
+            // 计算可用技能数量
+            const totalSkills = agentsData
+                .flatMap(group => group.agents)
+                .reduce((count, agent) => count + agent.skills.length, 0);
+            
+            // 更新统计信息显示
+            document.getElementById('total-agents').textContent = totalAgents;
+            document.getElementById('total-skills').textContent = totalSkills;
+            // 对话次数保持为∞
+        }
+
+        // 更新智能体问候语
+        function updateGreetings(agentsData) {
+            // 遍历所有分组和智能体
+            agentsData.forEach(group => {
+                group.agents.forEach(agent => {
+                    const greetingElement = document.getElementById(`greeting-agent-${agent.id.split('-')[1]}`);
+                    if (greetingElement) {
+                        // 从配置文件中获取描述作为问候语
+                        greetingElement.textContent = agent.description;
+                    }
+                });
+            });
         }
 
         // 动态生成智能体列表
@@ -1679,10 +1711,8 @@
 
                     const mainAvatar = document.getElementById('mainAvatar');
                     const mainTitle = document.getElementById('mainTitle');
-                    const mainSubtitle = document.getElementById('mainSubtitle');
 
                     mainTitle.textContent = agentName;
-                    mainSubtitle.textContent = '在线';
                     mainAvatar.className = `w-10 h-10 bg-gradient-to-br ${avatarGradients[agentAvatar]} rounded-lg flex items-center justify-center`;
                     mainAvatar.innerHTML = avatarIcons[agentAvatar].replace('w-4 h-4', 'w-6 h-6');
 
