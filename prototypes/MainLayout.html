@@ -969,90 +969,8 @@
             </div>
 
             <!-- 智能体分组列表 -->
-            <div class="flex-1 overflow-y-auto scrollbar-thin">
-                <!-- 分组 1: 通用助手 -->
-                <div class="mb-2">
-                    <div class="group-header px-4 py-3 bg-gray-100 cursor-pointer flex items-center justify-between group" data-group="general">
-                        <div class="flex items-center gap-3">
-                            <svg class="chevron-icon w-5 h-5 text-gray-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                            </svg>
-                            <span class="text-sm font-semibold text-gray-700">通用助手</span>
-                        </div>
-                    </div>
-
-                    <!-- 智能体列表 -->
-                    <div class="group-content space-y-1 expanded">
-                        <div class="agent-item mx-2 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-200 flex items-center gap-3 transition-colors selected" data-agent-id="agent-001" data-agent-name="智能助手" data-agent-avatar="blue">
-                            <div class="relative">
-                                <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
-                                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                    </svg>
-                                </div>
-                                <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm font-medium truncate">智能助手</span>
-                                    <span class="text-xs text-green-400">在线</span>
-                                </div>
-                                <p class="text-xs text-gray-400 truncate">通用智能助手，可以帮助您处理各种任务</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 分组 2: OA办公系统 -->
-                <div class="mb-2">
-                    <div class="group-header px-4 py-3 bg-gray-100 cursor-pointer flex items-center justify-between group" data-group="oa">
-                        <div class="flex items-center gap-3">
-                            <svg class="chevron-icon w-5 h-5 text-gray-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                            </svg>
-                            <span class="text-sm font-semibold text-gray-700">OA办公系统</span>
-                        </div>
-                    </div>
-
-                    <!-- 智能体列表 -->
-                    <div class="group-content space-y-1 expanded">
-                        <div class="agent-item mx-2 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-200 flex items-center gap-3 transition-colors" data-agent-id="agent-002" data-agent-name="代码助手" data-agent-avatar="purple">
-                            <div class="relative">
-                                <div class="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center">
-                                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
-                                    </svg>
-                                </div>
-                                <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm font-medium truncate">代码助手</span>
-                                    <span class="text-xs text-green-400">在线</span>
-                                </div>
-                                <p class="text-xs text-gray-400 truncate">代码生成和调试助手</p>
-                            </div>
-                        </div>
-
-                        <div class="agent-item mx-2 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-200 flex items-center gap-3 transition-colors" data-agent-id="agent-003" data-agent-name="待办助手" data-agent-avatar="orange">
-                            <div class="relative">
-                                <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center">
-                                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-                                    </svg>
-                                </div>
-                                <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm font-medium truncate">待办助手</span>
-                                    <span class="text-xs text-green-400">在线</span>
-                                </div>
-                                <p class="text-xs text-gray-400 truncate">待办事项管理助手</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="flex-1 overflow-y-auto scrollbar-thin" id="agentListContainer">
+                <!-- 智能体列表将通过JavaScript动态生成 -->
             </div>
 
             <!-- 底部设置按钮 -->
@@ -1517,55 +1435,6 @@
             'orange': '<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>'
         };
 
-        groupHeaders.forEach(header => {
-            header.addEventListener('click', function() {
-                const content = this.parentElement.querySelector('.group-content');
-
-                if (content.classList.contains('expanded')) {
-                    content.classList.remove('expanded');
-                    content.classList.add('collapsed');
-                    this.classList.remove('expanded');
-                    this.classList.add('collapsed');
-                } else {
-                    content.classList.remove('collapsed');
-                    content.classList.add('expanded');
-                    this.classList.remove('collapsed');
-                    this.classList.add('expanded');
-                }
-            });
-        });
-
-        agentItems.forEach(item => {
-            item.addEventListener('click', function() {
-                const agentId = this.dataset.agentId;
-                const agentName = this.dataset.agentName;
-                const agentAvatar = this.dataset.agentAvatar;
-
-                agentItems.forEach(i => i.classList.remove('selected'));
-                this.classList.add('selected');
-
-                const welcomeContent = document.getElementById('welcomeContent');
-                welcomeContent.classList.add('hidden');
-
-                const allChatContents = document.querySelectorAll('.chat-content-panel');
-                allChatContents.forEach(content => content.classList.add('hidden'));
-
-                const mainAvatar = document.getElementById('mainAvatar');
-                const mainTitle = document.getElementById('mainTitle');
-                const mainSubtitle = document.getElementById('mainSubtitle');
-
-                mainTitle.textContent = agentName;
-                mainSubtitle.textContent = '在线';
-                mainAvatar.className = `w-10 h-10 bg-gradient-to-br ${avatarGradients[agentAvatar]} rounded-lg flex items-center justify-center`;
-                mainAvatar.innerHTML = avatarIcons[agentAvatar].replace('w-4 h-4', 'w-6 h-6');
-
-                const targetChatContent = document.getElementById(`chat-${agentId}`);
-                if (targetChatContent) {
-                    targetChatContent.classList.remove('hidden');
-                }
-            });
-        });
-
         // 边栏收缩功能
         const sidebar = document.getElementById('sidebar');
         const sidebarToggle = document.getElementById('sidebarToggle');
@@ -1680,22 +1549,188 @@
             mobileMenuBtn.setAttribute('aria-label', '打开菜单');
         });
         
-        // 点击智能体后关闭移动端侧边栏
-        agentItems.forEach(item => {
-            item.addEventListener('click', function() {
-                if (window.innerWidth <= 768) {
-                    sidebar.classList.remove('mobile-open');
-                    mobileOverlay.classList.remove('visible');
-                    mobileMenuBtn.innerHTML = `
-                        <svg class="w-6 h-6 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                        </svg>
+        // 配置文件加载和智能体列表生成
+        function loadAgentsConfig() {
+            fetch('../config/agents.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to load agents configuration');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    renderAgentList(data.agents);
+                })
+                .catch(error => {
+                    console.error('Error loading agents config:', error);
+                    // 显示错误信息
+                    const agentListContainer = document.getElementById('agentListContainer');
+                    agentListContainer.innerHTML = `
+                        <div class="p-4 text-center text-red-500">
+                            <p>加载智能体配置失败</p>
+                            <p class="text-xs mt-1">请检查配置文件是否存在</p>
+                            <p class="text-xs mt-1">尝试加载路径: ../config/agents.json</p>
+                        </div>
                     `;
-                    mobileMenuBtn.setAttribute('aria-label', '打开菜单');
-                }
+                });
+        }
+
+        // 动态生成智能体列表
+        function renderAgentList(agentsData) {
+            const agentListContainer = document.getElementById('agentListContainer');
+            agentListContainer.innerHTML = '';
+
+            // 头像颜色映射
+            const avatarColorMap = {
+                'agent-001': 'blue',
+                'agent-002': 'purple',
+                'agent-003': 'orange'
+            };
+
+            // 遍历分组
+            agentsData.forEach(group => {
+                const groupElement = document.createElement('div');
+                groupElement.className = 'mb-2';
+                
+                // 分组头部
+                groupElement.innerHTML = `
+                    <div class="group-header px-4 py-3 bg-gray-100 cursor-pointer flex items-center justify-between group" data-group="${group.group_name.toLowerCase()}">
+                        <div class="flex items-center gap-3">
+                            <svg class="chevron-icon w-5 h-5 text-gray-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                            <span class="text-sm font-semibold text-gray-700">${group.group_name}</span>
+                        </div>
+                    </div>
+                    <div class="group-content space-y-1 expanded">
+                    </div>
+                `;
+
+                const contentElement = groupElement.querySelector('.group-content');
+
+                // 遍历智能体
+                group.agents.forEach((agent, index) => {
+                    const avatarColor = avatarColorMap[agent.id] || 'blue';
+                    const isSelected = index === 0 && agentsData.indexOf(group) === 0;
+                    
+                    const agentElement = document.createElement('div');
+                    agentElement.className = `agent-item mx-2 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-200 flex items-center gap-3 transition-colors ${isSelected ? 'selected' : ''}`;
+                    agentElement.dataset.agentId = agent.id;
+                    agentElement.dataset.agentName = agent.name;
+                    agentElement.dataset.agentAvatar = avatarColor;
+
+                    // 根据头像颜色选择对应的图标
+                    let avatarIcon = '';
+                    switch (avatarColor) {
+                        case 'purple':
+                            avatarIcon = '<svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>';
+                            break;
+                        case 'orange':
+                            avatarIcon = '<svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>';
+                            break;
+                        default:
+                            avatarIcon = '<svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>';
+                    }
+
+                    agentElement.innerHTML = `
+                        <div class="relative">
+                            <div class="w-12 h-12 bg-gradient-to-br ${avatarColor === 'blue' ? 'from-blue-400 to-blue-600' : avatarColor === 'purple' ? 'from-purple-400 to-purple-600' : 'from-orange-400 to-orange-600'} rounded-full flex items-center justify-center">
+                                ${avatarIcon}
+                            </div>
+                            <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm font-medium truncate">${agent.name}</span>
+                                <span class="text-xs text-green-400">在线</span>
+                            </div>
+                            <p class="text-xs text-gray-400 truncate">${agent.description}</p>
+                        </div>
+                    `;
+
+                    contentElement.appendChild(agentElement);
+                });
+
+                agentListContainer.appendChild(groupElement);
             });
-        });
-        
+
+            // 重新绑定事件监听器
+            bindAgentEvents();
+            bindGroupEvents();
+        }
+
+        // 绑定智能体点击事件
+        function bindAgentEvents() {
+            const agentItems = document.querySelectorAll('.agent-item');
+            agentItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const agentId = this.dataset.agentId;
+                    const agentName = this.dataset.agentName;
+                    const agentAvatar = this.dataset.agentAvatar;
+
+                    agentItems.forEach(i => i.classList.remove('selected'));
+                    this.classList.add('selected');
+
+                    const welcomeContent = document.getElementById('welcomeContent');
+                    welcomeContent.classList.add('hidden');
+
+                    const allChatContents = document.querySelectorAll('.chat-content-panel');
+                    allChatContents.forEach(content => content.classList.add('hidden'));
+
+                    const mainAvatar = document.getElementById('mainAvatar');
+                    const mainTitle = document.getElementById('mainTitle');
+                    const mainSubtitle = document.getElementById('mainSubtitle');
+
+                    mainTitle.textContent = agentName;
+                    mainSubtitle.textContent = '在线';
+                    mainAvatar.className = `w-10 h-10 bg-gradient-to-br ${avatarGradients[agentAvatar]} rounded-lg flex items-center justify-center`;
+                    mainAvatar.innerHTML = avatarIcons[agentAvatar].replace('w-4 h-4', 'w-6 h-6');
+
+                    const targetChatContent = document.getElementById(`chat-${agentId}`);
+                    if (targetChatContent) {
+                        targetChatContent.classList.remove('hidden');
+                    }
+
+                    // 移动端菜单处理
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.remove('mobile-open');
+                        mobileOverlay.classList.remove('visible');
+                        mobileMenuBtn.innerHTML = `
+                            <svg class="w-6 h-6 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                            </svg>
+                        `;
+                        mobileMenuBtn.setAttribute('aria-label', '打开菜单');
+                    }
+                });
+            });
+        }
+
+        // 绑定分组点击事件
+        function bindGroupEvents() {
+            const groupHeaders = document.querySelectorAll('.group-header');
+            groupHeaders.forEach(header => {
+                header.addEventListener('click', function() {
+                    const content = this.parentElement.querySelector('.group-content');
+
+                    if (content.classList.contains('expanded')) {
+                        content.classList.remove('expanded');
+                        content.classList.add('collapsed');
+                        this.classList.remove('expanded');
+                        this.classList.add('collapsed');
+                    } else {
+                        content.classList.remove('collapsed');
+                        content.classList.add('expanded');
+                        this.classList.remove('collapsed');
+                        this.classList.add('expanded');
+                    }
+                });
+            });
+        }
+
+        // 页面加载时加载智能体配置
+        window.addEventListener('DOMContentLoaded', loadAgentsConfig);
+
         // 主题切换功能
         const themeButton = document.querySelector('.tooltip-container:first-child button');
         const body = document.body;
