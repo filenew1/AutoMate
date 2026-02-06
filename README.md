@@ -1,113 +1,155 @@
-# React + TypeScript + Vite
+# AutoMate 桌面智能体聊天系统
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 项目概述
 
-Currently, two official plugins are available:
+AutoMate 是一款基于纯前端技术栈构建的跨平台桌面智能体聊天系统，参照OpenClaw实现方式。该系统旨在为用户提供一个界面精美、安装轻量、功能强大的智能体交互平台。用户可以通过类似 QQ 等即时通讯软件的聊天界面与各种智能体进行对话交互，智能体根据用户输入调用相应的 skill 执行操作，并将执行过程或结果返回给用户。系统使用Node.js作为核心运行环境，实现数据库访问和大模型接口调用，智能体配置统一以 JSON 格式存储。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 系统建设目标
 
-## React Compiler
+### 核心建设目标
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **功能目标**：
+  - 智能体管理：实现智能体的加载、分组、搜索和状态管理，支持智能体的在线状态监控和响应时间统计
+  - 聊天交互：实现流畅的消息发送和接收功能，支持技能调用和执行结果展示，确保消息状态的正确流转
+  - 文件处理：支持文件上传和管理，实现文件元数据的存储和检索，确保文件处理的安全性和可靠性
+  - 主题定制：提供浅色/深色主题切换功能，支持界面个性化设置，确保主题切换的流畅性和一致性
+  - 启动体验：优化应用启动流程，实现智能体配置的快速加载，提供友好的欢迎页和快速开始引导
 
-## Expanding the ESLint configuration
+- **技术目标**：
+  - 性能优化：确保应用启动时间<3秒，界面操作响应时间<300ms，消息发送延迟<500ms
+  - 数据安全：实现聊天数据的本地加密存储，确保用户数据的安全性和隐私保护
+  - 跨平台兼容：支持Windows 10+、macOS 10.15+、主流Linux发行版，确保在不同平台上的一致体验
+  - 模块化设计：采用模块化架构，便于功能扩展和维护，支持插件化开发
+  - 数据库优化：设计高效的数据库表结构和索引，确保数据查询性能和存储效率
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **用户体验目标**：
+  - 直观易用：设计符合即时通讯软件使用习惯的界面，降低用户学习成本
+  - 视觉美观：采用现代化的UI设计，支持主题切换，提供良好的视觉体验
+  - 响应流畅：确保界面操作的流畅性，避免卡顿和延迟
+  - 错误处理：提供友好的错误提示和帮助信息，增强用户信心
+  - 个性化：支持界面布局和主题的个性化设置，满足不同用户的需求
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
+- **系统目标**：
+  - 稳定性：确保系统的稳定运行，减少崩溃和异常情况
+  - 可扩展性：支持智能体类型和技能的扩展，适应未来功能需求的变化
+  - 可维护性：完善的日志记录机制，便于问题定位和系统维护
+  - 资源占用：优化系统资源占用，确保在低配置设备上的良好运行
+  - 版本管理：实现版本检查和更新机制，确保系统能够及时获取最新功能和修复
+
+## 核心功能
+
+### 智能体模块
+- **智能体管理**：加载、分组、搜索和状态管理
+- **智能体配置**：JSON格式存储，支持导入/导出
+- **智能体分组**：按group_name字段分组展示
+- **智能体搜索**：支持按名称、描述等搜索
+- **侧边栏交互**：支持收缩/展开，宽度调整
+- **智能体状态**：在线/离线状态显示，响应时间统计
+- **主题切换**：浅色/深色主题支持
+- **欢迎页**：显示统计信息和快速开始引导
+
+### 聊天交互模块
+- **消息发送与接收**：支持文本消息，消息状态指示
+- **Skill调用与执行**：智能体根据输入调用相应skill
+- **文件上传与处理**：支持文件上传和预览
+- **聊天记录管理**：本地加密存储，支持查询和导出
+- **消息编辑和撤回**：支持编辑已发送消息
+- **消息转发**：支持将消息转发给其他智能体
+- **消息收藏**：支持收藏重要消息
+
+## 技术栈
+
+### 前端技术栈
+- React：18.2.0+（推荐使用函数组件和Hooks）
+- TypeScript：5.0.0+（提供类型安全）
+- Tailwind CSS：3.3.0+（用于快速构建响应式UI）
+- Vite：4.4.0+（作为构建工具，Tauri推荐使用Vite）
+
+### 后端技术栈
+- Node.js：18.0.0+（核心运行环境，用于实现数据库访问、API调用和服务层逻辑）
+- Playwright：1.36.0+（用于浏览器自动化测试）
+
+### 数据库
+- SQLite：3.40.0+（轻量级嵌入式数据库）
+- node-sqlite3 或 better-sqlite3：用于Node.js中操作SQLite数据库
+
+### 打包工具
+- pkg 或 nexe：用于将Node.js应用打包为独立可执行文件
+- Vite：4.4.0+（用于前端代码构建和打包）
+
+## 目录结构
+
+```
+AutoMate/
+├── .github/             # GitHub配置文件
+│   └── workflows/       # CI/CD工作流
+├── .trae/               # Trae IDE配置
+│   └── rules/           # 项目规则文件
+├── .trae-cn/            # 中文Trae配置
+│   └── skills/          # 技能配置
+├── config/              # 配置文件目录
+│   └── agents.json      # 智能体配置文件
+├── prototypes/          # 原型设计文件
+│   ├── css/             # CSS文件
+│   └── MainLayout.html  # 主布局原型
+├── task/                # 任务管理目录
+│   ├── todo_list.md     # 待办任务列表
+│   ├── task_completed_list.md # 已完成任务列表
+│   └── task_logs_list.md # 任务执行日志
+├── test/                # 测试目录
+├── README.md            # 项目说明文档
+├── package.json         # 项目依赖配置
+└── 详细设计说明书.md      # 详细设计文档
+```
+
+## 快速开始
+
+### 环境要求
+- Node.js 18.0.0+
+- npm 9.0.0+
+
+### 安装步骤
+1. 克隆项目仓库
+2. 安装依赖：`npm install`
+3. 配置智能体：编辑 `config/agents.json` 文件
+4. 启动开发服务器：`npm run dev`
+5. 构建应用：`npm run build`
+
+### 配置智能体
+智能体配置文件位于 `config/agents.json`，格式如下：
+
+```json
+[
   {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+    "id": "agent-1",
+    "name": "智能助手",
+    "description": "一个通用的智能助手",
+    "group_name": "默认分组",
+    "skills": ["chat", "file", "web"],
+    "avatar": "default-avatar.png",
+    "status": "online"
+  }
+]
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 运行测试
+- 前端测试：`npm run test:frontend`
+- 后端测试：`npm run test:backend`
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 贡献指南
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1. Fork 项目仓库
+2. 创建特性分支：`git checkout -b feature/your-feature`
+3. 提交更改：`git commit -m 'Add some feature'`
+4. 推送到分支：`git push origin feature/your-feature`
+5. 打开 Pull Request
 
-## 项目命令
+## 许可证
 
-### 开发运行
-```bash
-# 安装依赖
-npm install
+MIT License
 
-# 启动开发服务器
-npm run dev
-```
+## 联系方式
 
-### 构建打包
-```bash
-# 构建前端应用
-npm run build
-
-# 预览构建结果
-npm run preview
-
-# 代码 lint 检查
-npm run lint
-```
-
-### 构建桌面应用 (Windows)
-```bash
-# 构建 exe 可执行文件
-npx tauri build
-
-# 构建结果位置：
-# - 可执行文件: src-tauri/target/release/app.exe
-# - MSI 安装包: src-tauri/target/release/bundle/msi/automate_0.1.0_x64_en-US.msi
-# - NSIS 安装包: src-tauri/target/release/bundle/nsis/automate_0.1.0_x64-setup.exe
-```
-
-### 开发模式运行桌面应用
-```bash
-# 在开发模式下运行 Tauri 应用
-npx tauri dev
-```
+如有问题或建议，请通过以下方式联系我们：
+- 项目邮箱：contact@automate.example.com
+- GitHub Issues：https://github.com/yourusername/AutoMate/issues

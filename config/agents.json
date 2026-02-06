@@ -41,7 +41,7 @@
       ]
     },
     {
-      "group_name": "OA办公系统",
+      "group_name": "OA办公系统-1",
       "agents": [
         {
           "id": "agent-002",
@@ -81,7 +81,7 @@
         {
           "id": "agent-003",
           "name": "待办助手",
-          "description": "你好！我是待办助手，我可以帮你管理待办事项-1。。。。。",
+          "description": "你好！我是待办助手，我可以帮你管理待办事项-22。。。。。",
           "avatar": "avatar-3.png",
           "type": "todo",
           "config": {
