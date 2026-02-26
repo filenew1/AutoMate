@@ -5,7 +5,7 @@ import { Menu } from 'lucide-react'
 
 export const Header: React.FC = () => {
   const navigate = useNavigate()
-  const { selectedAgentId, agents, theme } = useAppStore()
+  const { selectedAgentId, agents, theme, setSelectedAgentId } = useAppStore()
 
   const selectedAgent = React.useMemo(() => {
     if (!selectedAgentId) return null
@@ -64,7 +64,7 @@ export const Header: React.FC = () => {
 
   return (
     <header className={getHeaderClasses()}>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 flex-1 min-w-0">
         <button 
           className="mobile-menu-btn" 
           id="mobileMenuBtn" 
@@ -91,31 +91,34 @@ export const Header: React.FC = () => {
           <Menu className={`w-6 h-6 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`} />
         </button>
         <button 
-          className="flex items-center gap-4 cursor-pointer group relative"
-          onClick={() => navigate('/')}
+          className="flex items-center gap-4 cursor-pointer group relative text-left flex-shrink-0"
+          onClick={() => {
+            setSelectedAgentId(null)
+            navigate('/')
+          }}
           aria-label="返回首页"
         >
-          <div className={`w-10 h-10 bg-gradient-to-br ${selectedAgent ? getAvatarGradient(selectedAgent.avatarColor) : 'from-blue-500 to-purple-600'} rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-blue-500/30`}>
+          <div className={`w-10 h-10 bg-gradient-to-br ${selectedAgent ? getAvatarGradient(selectedAgent.avatarColor) : 'from-blue-500 to-purple-600'} rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-blue-500/30 flex-shrink-0`}>
             {selectedAgent ? getAvatarIcon(selectedAgent.avatarColor) : (
               <svg className="w-6 h-6 text-white transition-transform duration-300 group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             )}
           </div>
-          <div className="transition-transform duration-300 group-hover:translate-x-1">
-            <h1 className={`text-lg font-bold ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'} transition-colors duration-300 group-hover:text-blue-600 dark:group-hover:text-blue-400`}>
+          <div className="transition-transform duration-300 group-hover:translate-x-1 text-left min-w-0">
+            <h1 className={`text-lg font-bold ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'} transition-colors duration-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 text-left truncate`}>
               {selectedAgent ? selectedAgent.name : 'AutoMate'}
             </h1>
-            <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} transition-colors duration-300 group-hover:text-blue-500 dark:group-hover:text-blue-300`}>
+            <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} transition-colors duration-300 group-hover:text-blue-500 dark:group-hover:text-blue-300 text-left truncate`}>
               {selectedAgent ? selectedAgent.description : '智能体交互平台'}
             </p>
           </div>
         </button>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 flex-shrink-0">
         <span className={`text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>欢迎回来,用户</span>
         <div 
-          className="w-8 h-8 rounded-full flex items-center justify-center"
+          className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
           style={{
             background: theme === 'dark' ? '#4b5563' : '#d1d5db'
           }}

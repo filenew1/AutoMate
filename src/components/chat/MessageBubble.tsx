@@ -54,10 +54,16 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   }
 
   const getTimestampClasses = () => {
-    return theme === 'dark' ? 'text-xs text-gray-500' : 'text-xs text-gray-400'
+    if (isUser) {
+      return 'text-xs text-white'
+    }
+    return theme === 'dark' ? 'text-xs text-gray-400' : 'text-xs text-gray-500'
   }
 
   const getStatusIconClasses = () => {
+    if (isUser) {
+      return 'text-xs text-white'
+    }
     return theme === 'dark' ? 'text-xs text-gray-400' : 'text-xs text-gray-400'
   }
 
