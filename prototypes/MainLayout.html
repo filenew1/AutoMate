@@ -1551,7 +1551,7 @@
         
         // 配置文件加载和智能体列表生成
         function loadAgentsConfig() {
-            fetch('../config/agents.json')
+            fetch('/config/agents.json')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Failed to load agents configuration');
@@ -1571,7 +1571,7 @@
                         <div class="p-4 text-center text-red-500">
                             <p>加载智能体配置失败</p>
                             <p class="text-xs mt-1">请检查配置文件是否存在</p>
-                            <p class="text-xs mt-1">尝试加载路径: ../config/agents.json</p>
+                            <p class="text-xs mt-1">尝试加载路径: /config/agents.json</p>
                         </div>
                     `;
                 });

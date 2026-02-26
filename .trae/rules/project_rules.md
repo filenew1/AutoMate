@@ -1,49 +1,44 @@
+---
+alwaysApply: true
+---
 # AutoMate 项目技术栈规范
 
-## 项目概述
-AutoMate 是一款基于纯前端技术栈构建的跨平台桌面智能体聊天系统，参照OpenClaw实现方式。该系统旨在为用户提供一个界面精美、安装轻量、功能强大的智能体交互平台。用户可以通过类似 QQ 等即时通讯软件的聊天界面与各种智能体进行对话交互，智能体根据用户输入调用相应的 skill 执行操作，并将执行过程或结果返回给用户。系统使用Node.js作为核心运行环境，实现数据库访问和大模型接口调用，智能体配置统一以 JSON 格式存储。
+## 1. 技术栈
 
+**前端**: React 18+, TypeScript 5.0+, Tailwind CSS 3.0+, Vite 5.0+, Radix UI, Lucide React, Zustand, React Router, react-markdown, @tauri-apps/plugin-fs, @tauri-apps/plugin-dialog, Axios
 
+**后端**: Node.js 18.0+, Playwright 1.30+, SQLite 3.40+, sqlite3, better-sqlite3
 
-## 前端技术栈
-- React：18.2.0+（推荐使用函数组件和Hooks）
-- TypeScript：5.0.0+（提供类型安全）
-- Tailwind CSS：3.3.0+（用于快速构建响应式UI）
-- Vite：4.4.0+（作为构建工具，Tauri推荐使用Vite）
-- 改完后需要使用 @[ui-ux-pro-max] 进行更新UI组件
+**桌面框架**: Tauri 2.x
 
-## 后端技术栈
-- Node.js：18.0.0+（核心运行环境，用于实现数据库访问、API调用和服务层逻辑）
-- Playwright：1.36.0+（用于浏览器自动化测试）
+## 2. 开发约定
 
-## 数据库
-- SQLite：3.40.0+（轻量级嵌入式数据库）
-- node-sqlite3 或 better-sqlite3：用于Node.js中操作SQLite数据库
+**代码规范**: 遵循 React/TypeScript/Node.js 规范，提交前必须通过 lint 和 typecheck，新功能必须编写测试用例，UI/UX 设计必须使用 @[ui-ux-pro-max] skill
 
-## 打包工具
-- pkg 或 nexe：用于将Node.js应用打包为独立可执行文件
-- Vite：4.4.0+（用于前端代码构建和打包）
+**测试规范**: 前端测试使用 Playwright MCP 框架，后端测试使用 Chrome DevTools MCP 框架，测试函数名以 test_ 开头，测试文件放在 /tests/ 目录
 
-## 目录结构
-```
-AutoMate/
-├── .github/             # GitHub配置文件
-│   └── workflows/       # CI/CD工作流
-├── .trae/               # Trae IDE配置
-│   └── rules/           # 项目规则文件
-├── .trae-cn/            # 中文Trae配置
-│   └── skills/          # 技能配置
-├── config/              # 配置文件目录
-│   └── agents.json      # 智能体配置文件
-├── prototypes/          # 原型设计文件
-│   ├── css/             # CSS文件
-│   └── MainLayout.html  # 主布局原型
-├── task/                # 任务管理目录
-│   ├── todo_list.md     # 待办任务列表
-│   ├── task_completed_list.md # 已完成任务列表
-│   └── task_logs_list.md # 任务执行日志
-├── test/                # 测试目录
-├── README.md            # 项目说明文档
-├── package.json         # 项目依赖配置
-└── 详细设计说明书.md      # 详细设计文档
-```
+**日期时间**: 使用 datetime.now() 获取当前时间，数据库时间字段用 DATETIME 类型，API 响应时间戳用 ISO 8601 格式
+
+**安全约定**: 敏感信息加密存储，用户数据本地化存储，防止 SQL 注入和 XSS 攻击，文件传输存储安全保护，技能执行沙箱隔离
+
+**配置约定**: 智能体配置 ./config/agents.json，技能存储 ./skills/，数据库 ./data/automate.db，日志 ./logs/
+
+**版本约定**: 遵循语义化版本规范 MAJOR.MINOR.PATCH
+
+## 3. 文档约定
+
+所有文档使用 Markdown 格式编写，代码块必须指定语言类型，文件路径基于 docs 目录，文档更新需同步更新相关引用
+
+## 4. 模块划分
+
+基础规范: 命名规范 编码规范
+
+数据层: 数据库设计 数据存储设计
+
+接口层: 前端组件接口 后端API接口 Tauri通信接口
+
+业务模块: 智能体模块 聊天交互模块 主题模块 启动页模块
+
+非功能设计: 性能设计 安全设计 兼容性设计 可用性设计 可维护性设计 可扩展性设计
+
+技术架构: 前端技术栈 后端技术栈 数据库技术 架构设计
