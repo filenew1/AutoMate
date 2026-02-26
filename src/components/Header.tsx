@@ -1,8 +1,10 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAppStore } from '@/store/useAppStore'
 import { Menu } from 'lucide-react'
 
 export const Header: React.FC = () => {
+  const navigate = useNavigate()
   const { selectedAgentId, agents, theme } = useAppStore()
 
   const selectedAgent = React.useMemo(() => {
@@ -88,21 +90,27 @@ export const Header: React.FC = () => {
         >
           <Menu className={`w-6 h-6 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`} />
         </button>
-        <div className={`w-10 h-10 bg-gradient-to-br ${selectedAgent ? getAvatarGradient(selectedAgent.avatarColor) : 'from-blue-500 to-purple-600'} rounded-lg flex items-center justify-center`}>
-          {selectedAgent ? getAvatarIcon(selectedAgent.avatarColor) : (
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-          )}
-        </div>
-        <div>
-          <h1 className={`text-lg font-bold ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>
-            {selectedAgent ? selectedAgent.name : 'AutoMate'}
-          </h1>
-          <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-            {selectedAgent ? selectedAgent.description : '智能体交互平台'}
-          </p>
-        </div>
+        <button 
+          className="flex items-center gap-4 cursor-pointer group relative"
+          onClick={() => navigate('/')}
+          aria-label="返回首页"
+        >
+          <div className={`w-10 h-10 bg-gradient-to-br ${selectedAgent ? getAvatarGradient(selectedAgent.avatarColor) : 'from-blue-500 to-purple-600'} rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-blue-500/30`}>
+            {selectedAgent ? getAvatarIcon(selectedAgent.avatarColor) : (
+              <svg className="w-6 h-6 text-white transition-transform duration-300 group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            )}
+          </div>
+          <div className="transition-transform duration-300 group-hover:translate-x-1">
+            <h1 className={`text-lg font-bold ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'} transition-colors duration-300 group-hover:text-blue-600 dark:group-hover:text-blue-400`}>
+              {selectedAgent ? selectedAgent.name : 'AutoMate'}
+            </h1>
+            <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} transition-colors duration-300 group-hover:text-blue-500 dark:group-hover:text-blue-300`}>
+              {selectedAgent ? selectedAgent.description : '智能体交互平台'}
+            </p>
+          </div>
+        </button>
       </div>
       <div className="flex items-center gap-3">
         <span className={`text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>欢迎回来,用户</span>

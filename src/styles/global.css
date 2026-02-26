@@ -446,3 +446,218 @@ select {
   background: linear-gradient(120deg, #713f12 0%, #a16207 100%);
   color: #fef08a;
 }
+
+/* AgentItem 增强效果 */
+.agent-item {
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.agent-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.03) 50%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.agent-item:hover::before {
+  opacity: 1;
+}
+
+.agent-item .avatar-container {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.agent-item:hover .avatar-container {
+  transform: scale(1.08);
+}
+
+.agent-item .status-badge {
+  transition: all 0.2s ease;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(4px);
+}
+
+.dark-theme .agent-item .status-badge {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.agent-item:hover .status-badge {
+  transform: scale(1.05);
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.dark-theme .agent-item:hover .status-badge {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* 脉冲动画增强 */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.pulse-animation::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.4;
+  animation: pulse-ring 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* 选中状态的发光效果 */
+.agent-item[class*="border-blue"] {
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.1);
+}
+
+.agent-item[class*="border-blue"]:hover {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2), 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+/* Avatar 科技感效果 */
+.avatar-glow {
+  filter: blur(25px);
+  z-index: 5;
+  transition: opacity 0.3s ease;
+}
+
+.agent-item:hover .avatar-glow {
+  opacity: 0.8;
+  animation: glow-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.1);
+  }
+}
+
+.tech-ring {
+  border: 3px solid transparent;
+  background: transparent;
+  transition: all 0.4s ease;
+}
+
+.agent-item:hover .tech-ring {
+  border-color: rgba(59, 130, 246, 0.4);
+  animation: ring-rotate 2s linear infinite;
+}
+
+@keyframes ring-rotate {
+  0% {
+    transform: rotate(0deg) scale(1.25);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: rotate(360deg) scale(1.25);
+    opacity: 0;
+  }
+}
+
+/* 选中状态的科技光环 */
+.agent-item.selected .tech-ring {
+  border-color: rgba(59, 130, 246, 0.6);
+  animation: ring-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes ring-pulse {
+  0%, 100% {
+    transform: scale(1.15);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.5;
+  }
+}
+
+/* Avatar 容器增强 */
+.avatar-container {
+  position: relative;
+}
+
+.avatar-container::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(255, 255, 255, 0.1) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.agent-item:hover .avatar-container::before {
+  opacity: 1;
+}
+
+.agent-item.selected .avatar-container::before {
+  opacity: 1;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, transparent 50%, rgba(59, 130, 246, 0.2) 100%);
+}
+
+/* 粒子效果 */
+.avatar-container::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.3s ease;
+}
+
+.agent-item:hover .avatar-container::after {
+  transform: translate(-50%, -50%) scale(1);
+  animation: particle-float 2s ease-in-out infinite;
+}
+
+@keyframes particle-float {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1) translateY(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2) translateY(-5px);
+  }
+}
+
+/* 深色主题适配 */
+.dark-theme .avatar-container::after {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.dark-theme .tech-ring {
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.dark-theme .agent-item:hover .tech-ring {
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.dark-theme .agent-item.selected .tech-ring {
+  border-color: rgba(59, 130, 246, 0.6);
+}
