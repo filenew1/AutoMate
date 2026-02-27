@@ -182,7 +182,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
   }
 
   const getButtonAreaClasses = () => {
-    return 'flex items-center justify-between p-1'
+    return theme === 'dark' ? 'flex items-center justify-between p-1 bg-gray-700' : 'flex items-center justify-between p-1'
   }
 
   const getSendButtonClasses = () => {
