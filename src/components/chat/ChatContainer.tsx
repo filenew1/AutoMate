@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useAppStore } from '@/store/useAppStore'
-import { Send, Paperclip } from 'lucide-react'
+import { Send, Paperclip, Square } from 'lucide-react'
 
 interface ChatContainerProps {
   agentId: string
@@ -10,6 +10,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
   const { agents, chats, addMessage, setTyping, theme } = useAppStore()
   const [inputText, setInputText] = useState('')
   const [showScrollButton, setShowScrollButton] = useState(false)
+  const [isSending, setIsSending] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const chatAreaRef = useRef<HTMLDivElement>(null)
 
@@ -42,6 +43,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
   const handleSend = () => {
     if (!inputText.trim()) return
 
+    setIsSending(true)
     addMessage(agentId, {
       content: inputText,
       isUser: true,
@@ -55,6 +57,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
 
       setTimeout(() => {
         setTyping(agentId, false)
+        setIsSending(false)
         addMessage(agentId, {
           content: `这是智能体的回复：${inputText}`,
           isUser: false,
@@ -62,6 +65,11 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
         })
       }, 1000)
     }, 500)
+  }
+
+  const handleStop = () => {
+    setIsSending(false)
+    setTyping(agentId, false)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -104,17 +112,45 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
   }
 
   const getMessageClasses = (isUser: boolean) => {
-    let baseClasses = 'max-w-[500px] px-4 py-2 rounded-lg'
+    let baseClasses = 'max-w-[500px] px-4 py-2 rounded-lg break-words'
     if (isUser) {
-      baseClasses += ' bg-blue-500 text-white rounded-tr-sm'
+      baseClasses += ' bg-[#95EC69] text-gray-900 rounded-tr-sm'
     } else {
       baseClasses += theme === 'dark' ? ' bg-gray-700 text-white rounded-bl-sm' : ' bg-gray-200 text-gray-900 rounded-bl-sm'
     }
     return baseClasses
   }
 
-  const getTimestampClasses = () => {
-    return theme === 'dark' ? 'text-xs text-gray-500 mt-1 block' : 'text-xs text-gray-400 mt-1 block'
+  const shouldShowTimestamp = (currentMessage: any, previousMessage: any) => {
+    if (!previousMessage) return true
+    
+    const currentTime = new Date(currentMessage.timestamp)
+    const previousTime = new Date(previousMessage.timestamp)
+    
+    const timeDiff = currentTime.getTime() - previousTime.getTime()
+    const minutesDiff = timeDiff / (1000 * 60)
+    
+    return minutesDiff >= 1
+  }
+
+  const formatTimestamp = (timestamp: string | number) => {
+    const date = new Date(timestamp)
+    const now = new Date()
+    const isToday = date.toDateString() === now.toDateString()
+    
+    if (isToday) {
+      return date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
+    } else {
+      return date.toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })
+    }
+  }
+
+  const getTimestampSeparatorClasses = () => {
+    return theme === 'dark' ? 'flex justify-center my-4' : 'flex justify-center my-4'
+  }
+
+  const getTimestampBubbleClasses = () => {
+    return theme === 'dark' ? 'bg-gray-700 text-gray-400 text-xs px-3 py-1 rounded-full' : 'bg-gray-200 text-gray-500 text-xs px-3 py-1 rounded-full'
   }
 
   const getTypingIndicatorClasses = () => {
@@ -186,9 +222,19 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
   }
 
   const getSendButtonClasses = () => {
-    return theme === 'dark' 
-      ? 'w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:from-gray-600 disabled:to-gray-700 transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100' 
-      : 'w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:from-gray-300 disabled:to-gray-400 transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100'
+    if (chat.isTyping || isSending) {
+      return theme === 'dark' 
+        ? 'w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 cursor-pointer' 
+        : 'w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 cursor-pointer'
+    } else if (!inputText.trim()) {
+      return theme === 'dark' 
+        ? 'w-10 h-10 rounded-full bg-gradient-to-br from-gray-600 to-gray-700 transition-all duration-300 flex items-center justify-center shadow-lg cursor-not-allowed opacity-50' 
+        : 'w-10 h-10 rounded-full bg-gradient-to-br from-gray-300 to-gray-400 transition-all duration-300 flex items-center justify-center shadow-lg cursor-not-allowed opacity-50'
+    } else {
+      return theme === 'dark' 
+        ? 'w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 cursor-pointer' 
+        : 'w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 cursor-pointer'
+    }
   }
 
   return (
@@ -223,19 +269,29 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
           </div>
         )}
 
-        {chat.messages.map((message) => (
-          <div
-            key={message.id}
-            className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
-          >
-            <div className={getMessageClasses(message.isUser)}>
-              <p className="text-sm">{message.content}</p>
-              <span className={getTimestampClasses()}>
-                {new Date(message.timestamp).toLocaleTimeString()}
-              </span>
-            </div>
-          </div>
-        ))}
+        {chat.messages.map((message, index) => {
+          const previousMessage = chat.messages[index - 1]
+          const showTimestamp = shouldShowTimestamp(message, previousMessage)
+          
+          return (
+            <React.Fragment key={message.id}>
+              {showTimestamp && (
+                <div className={getTimestampSeparatorClasses()}>
+                  <span className={getTimestampBubbleClasses()}>
+                    {formatTimestamp(message.timestamp)}
+                  </span>
+                </div>
+              )}
+              <div
+                className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
+              >
+                <div className={getMessageClasses(message.isUser)}>
+                  <p className="text-sm">{message.content}</p>
+                </div>
+              </div>
+            </React.Fragment>
+          )
+        })}
 
         {chat.isTyping && (
           <div className="flex justify-start">
@@ -255,10 +311,10 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
       {showScrollButton && (
         <button
           onClick={scrollToBottom}
-          className="absolute bottom-32 right-8 w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full shadow-lg hover:shadow-xl transition-shadow"
+          className="absolute bottom-36 left-1/2 -translate-x-1/2 w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 z-50 cursor-pointer flex items-center justify-center"
           title="滚动到底部"
         >
-          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
           </svg>
         </button>
@@ -287,12 +343,15 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
             <div>
               <button
                 id={`send-btn-${agentId}`}
-                onClick={handleSend}
-                disabled={!inputText.trim()}
+                onClick={chat.isTyping || isSending ? handleStop : handleSend}
                 className={getSendButtonClasses()}
-                title="发送消息"
+                title={chat.isTyping || isSending ? "停止生成" : "发送消息"}
               >
-                <Send className="w-5 h-5 text-white" />
+                {chat.isTyping || isSending ? (
+                  <Square className="w-5 h-5 text-white" />
+                ) : (
+                  <Send className="w-5 h-5 text-white" />
+                )}
               </button>
             </div>
           </div>
