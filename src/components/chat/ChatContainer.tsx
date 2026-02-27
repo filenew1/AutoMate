@@ -131,22 +131,76 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
     return baseClasses
   }
 
+  const getInputWrapperClasses = () => {
+    let baseClasses = 'border rounded-lg overflow-hidden'
+    baseClasses += theme === 'dark' ? ' border-gray-600' : ' border-gray-200'
+    return baseClasses
+  }
+
+  const getAvatarGradient = (color: string) => {
+    switch (color) {
+      case 'purple':
+        return 'from-purple-400 to-purple-600'
+      case 'orange':
+        return 'from-orange-400 to-orange-600'
+      default:
+        return 'from-blue-400 to-blue-600'
+    }
+  }
+
+  const getAvatarIcon = (color: string) => {
+    switch (color) {
+      case 'purple':
+        return (
+          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+          </svg>
+        )
+      case 'orange':
+        return (
+          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+          </svg>
+        )
+      default:
+        return (
+          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+        )
+    }
+  }
+
   const getAttachmentButtonClasses = () => {
-    return theme === 'dark' ? 'w-10 h-10 rounded-full hover:bg-gray-700 transition-colors' : 'w-10 h-10 rounded-full hover:bg-gray-100 transition-colors'
+    return theme === 'dark' 
+      ? 'w-10 h-10 rounded-full hover:bg-gray-600 transition-all duration-300 flex items-center justify-center shadow-md hover:shadow-lg hover:scale-105' 
+      : 'w-10 h-10 rounded-full hover:bg-gray-200 transition-all duration-300 flex items-center justify-center shadow-md hover:shadow-lg hover:scale-105'
   }
 
   const getInputClasses = () => {
-    return theme === 'dark' ? 'flex-1 resize-none border-0 bg-transparent text-white placeholder-gray-400 focus:outline-none' : 'flex-1 resize-none border-0 bg-transparent text-gray-900 placeholder-gray-400 focus:outline-none'
+    return theme === 'dark' ? 'w-full bg-gray-700 text-white px-4 py-3 focus:outline-none placeholder-gray-400 resize-none scrollbar-thin border-none flex-grow' : 'w-full bg-white text-gray-900 px-4 py-3 focus:outline-none placeholder-gray-400 resize-none scrollbar-thin border-none flex-grow'
+  }
+
+  const getButtonAreaClasses = () => {
+    return 'flex items-center justify-between p-1'
+  }
+
+  const getSendButtonClasses = () => {
+    return theme === 'dark' 
+      ? 'w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:from-gray-600 disabled:to-gray-700 transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100' 
+      : 'w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:from-gray-300 disabled:to-gray-400 transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100'
   }
 
   return (
     <div className={getContainerClasses()}>
       <header className={getHeaderClasses()}>
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
-            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
+          <div className={`w-10 h-10 bg-gradient-to-br ${agent ? getAvatarGradient(agent.avatarColor) : 'from-blue-400 to-blue-600'} rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-blue-500/30 flex-shrink-0`}>
+            {agent ? getAvatarIcon(agent.avatarColor) : (
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            )}
           </div>
           <div>
             <h1 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
@@ -211,29 +265,37 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
       )}
 
       <div className={getInputAreaClasses()}>
-        <div className="flex items-end gap-3">
-          <button className={getAttachmentButtonClasses()}>
-            <Paperclip className="w-5 h-5 text-gray-400" />
-          </button>
-          <textarea
-            id={`message-input-${agentId}`}
-            placeholder="输入消息..."
-            value={inputText}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            className={getInputClasses()}
-            style={{ minHeight: '100px', maxHeight: '300px' }}
-            rows={1}
-          />
-          <button
-            id={`send-btn-${agentId}`}
-            onClick={handleSend}
-            disabled={!inputText.trim()}
-            className="w-7 h-7 rounded-full bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-            title="发送消息"
-          >
-            <Send className="w-4 h-4 text-white" />
-          </button>
+        <div className={getInputWrapperClasses()}>
+          <div className="relative flex flex-grow">
+            <textarea
+              id={`message-input-${agentId}`}
+              placeholder="输入消息..."
+              value={inputText}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              className={getInputClasses()}
+              style={{ minHeight: '100px', maxHeight: '300px' }}
+              rows={1}
+            />
+          </div>
+          <div className={getButtonAreaClasses()}>
+            <div className="flex items-center gap-2">
+              <button className={getAttachmentButtonClasses()} aria-label="添加附件">
+                <Paperclip className="w-5 h-5 text-gray-400" />
+              </button>
+            </div>
+            <div>
+              <button
+                id={`send-btn-${agentId}`}
+                onClick={handleSend}
+                disabled={!inputText.trim()}
+                className={getSendButtonClasses()}
+                title="发送消息"
+              >
+                <Send className="w-5 h-5 text-white" />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
