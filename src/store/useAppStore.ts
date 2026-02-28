@@ -20,6 +20,9 @@ export interface Message {
   isUser: boolean
   timestamp: string
   status: 'sending' | 'sent' | 'delivered' | 'read' | 'failed'
+  skillActivated?: string
+  thinkingContent?: string
+  isStreaming?: boolean
 }
 
 export interface ChatState {
@@ -65,7 +68,9 @@ interface AppState {
   setSelectedAgentId: (agentId: string | null) => void
   setSearchQuery: (query: string) => void
   toggleGroup: (groupName: string) => void
-  addMessage: (agentId: string, message: Omit<Message, 'id' | 'timestamp'>) => void
+  addMessage: (agentId: string, message: Omit<Message, 'id' | 'timestamp'>) => string
+  updateMessageContent: (agentId: string, messageId: string, newContent: string, isStreaming?: boolean) => void
+  removeLastAiMessage: (agentId: string) => string | null
   setTyping: (agentId: string, isTyping: boolean) => void
   updateUserSettings: (settings: Partial<UserSettings>) => void
   setTheme: (theme: 'light' | 'dark') => void
@@ -134,24 +139,82 @@ export const useAppStore = create<AppState>()((set) => ({
     return { collapsedGroups: newCollapsedGroups }
   }),
   
-  addMessage: (agentId, message) => set((state) => {
-    const newMessage: Message = {
-      id: `${agentId}-${Date.now()}-${Math.random()}`,
-      timestamp: new Date().toISOString(),
-      ...message,
-    }
-    
-    const agentChats = state.chats[agentId] || { messages: [], isTyping: false }
+  addMessage: (agentId: string, message: Omit<Message, 'id' | 'timestamp'>): string => {
+    let messageId = '';
+    set((state) => {
+      messageId = `${agentId}-${Date.now()}-${Math.random()}`;
+      const newMessage: Message = {
+        id: messageId,
+        timestamp: new Date().toISOString(),
+        ...message,
+      }
+      
+      const agentChats = state.chats[agentId] || { messages: [], isTyping: false }
+      return {
+        chats: {
+          ...state.chats,
+          [agentId]: {
+            ...agentChats,
+            messages: [...agentChats.messages, newMessage],
+          },
+        },
+      }
+    })
+    return messageId;
+  },
+
+  updateMessageContent: (agentId, messageId, newContent, isStreaming = false) => set((state) => {
+    const agentChats = state.chats[agentId];
+    if (!agentChats) return state;
+
+    const updatedMessages = agentChats.messages.map((msg) => {
+      if (msg.id === messageId) {
+        return { ...msg, content: newContent, isStreaming };
+      }
+      return msg;
+    });
+
     return {
       chats: {
         ...state.chats,
         [agentId]: {
           ...agentChats,
-          messages: [...agentChats.messages, newMessage],
+          messages: updatedMessages,
         },
       },
-    }
+    };
   }),
+
+  removeLastAiMessage: (agentId) => {
+    let removedContent: string | null = null
+    set((state) => {
+      const agentChats = state.chats[agentId]
+      if (!agentChats || agentChats.messages.length === 0) {
+        return state
+      }
+      
+      const messages = [...agentChats.messages]
+      
+      for (let i = messages.length - 1; i >= 0; i--) {
+        if (!messages[i].isUser) {
+          removedContent = messages[i].content
+          messages.splice(i, 1)
+          break
+        }
+      }
+      
+      return {
+        chats: {
+          ...state.chats,
+          [agentId]: {
+            ...agentChats,
+            messages,
+          },
+        },
+      }
+    })
+    return removedContent
+  },
   
   setTyping: (agentId, isTyping) => set((state) => {
     const agentChats = state.chats[agentId] || { messages: [], isTyping: false }

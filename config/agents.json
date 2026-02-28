@@ -10,30 +10,16 @@
           "avatar": "avatar-1.png",
           "type": "general",
           "config": {
-            "url": "model-url",
-            "api_key": "your-api-key",
-            "model": "gpt-3.5-turbo"
+            "url": "https://api.fgw.sz.gov.cn:9016/modelgateway/compatible-model/v1",
+            "api_key": "sk-Sy3i0ApbXU9uVIB512352453690a47C0A3883f77F4736211",
+            "model": "Qwen3-30B-A3B"
           },
           "skills": [
             {
-              "name": "web_search",
-              "description": "网页搜索技能，用于获取互联网信息",
+              "name": "official-doc-optimize",
+              "description": "官方文档优化技能，用于优化官方文档的内容",
               "type": "information",
-              "storage_path": "skills/web_search",
-              "version": "v1.0.0"
-            },
-            {
-              "name": "file_process",
-              "description": "文件处理技能，用于读取、写入和修改文件",
-              "type": "file",
-              "storage_path": "skills/file_process",
-              "version": "v1.0.0"
-            },
-            {
-              "name": "data_analysis",
-              "description": "数据分析技能，用于处理和分析数据",
-              "type": "analysis",
-              "storage_path": "skills/data_analysis",
+              "storage_path": "./skills/official-doc-optimize",
               "version": "v1.0.0"
             }
           ]
@@ -59,21 +45,21 @@
               "name": "code_generate",
               "description": "代码生成技能，用于生成各种编程语言的代码",
               "type": "code",
-              "storage_path": "skills/code_generate",
+              "storage_path": "./skills/code_generate",
               "version": "v1.0.0"
             },
             {
               "name": "code_debug",
               "description": "代码调试技能，用于调试和修复代码",
               "type": "code",
-              "storage_path": "skills/code_debug",
+              "storage_path": "./skills/code_debug",
               "version": "v1.0.0"
             },
             {
               "name": "code_optimize",
               "description": "代码优化技能，用于优化代码性能和可读性",
               "type": "code",
-              "storage_path": "skills/code_optimize",
+              "storage_path": "./skills/code_optimize",
               "version": "v1.0.0"
             }
           ]
@@ -94,155 +80,26 @@
               "name": "todo_create",
               "description": "创建待办事项技能",
               "type": "productivity",
-              "storage_path": "skills/todo_create",
+              "storage_path": "./skills/todo_create",
               "version": "v1.0.0"
             },
             {
               "name": "todo_update",
               "description": "更新待办事项技能",
               "type": "productivity",
-              "storage_path": "skills/todo_update",
+              "storage_path": "./skills/todo_update",
               "version": "v1.0.0"
             },
             {
               "name": "todo_query",
               "description": "查询待办事项技能",
               "type": "productivity",
-              "storage_path": "skills/todo_query",
+              "storage_path": "./skills/todo_query",
               "version": "v1.0.0"
             }
           ]
         }
       ]
     }
-  ],
-  "skills": {
-    "web_search": {
-      "name": "web_search",
-      "description": "网页搜索技能，用于获取互联网信息",
-      "type": "information",
-      "versions": {
-        "v1.0.0": {
-          "config": {
-            "engine": "google",
-            "max_results": 5
-          },
-          "created_at": "2023-01-01T00:00:00Z"
-        }
-      },
-      "default_version": "v1.0.0"
-    },
-    "file_process": {
-      "name": "file_process",
-      "description": "文件处理技能，用于读取、写入和修改文件",
-      "type": "file",
-      "versions": {
-        "v1.0.0": {
-          "config": {
-            "supported_formats": ["txt", "md", "json", "csv"]
-          },
-          "created_at": "2023-01-01T00:00:00Z"
-        }
-      },
-      "default_version": "v1.0.0"
-    },
-    "data_analysis": {
-      "name": "data_analysis",
-      "description": "数据分析技能，用于处理和分析数据",
-      "type": "analysis",
-      "versions": {
-        "v1.0.0": {
-          "config": {
-            "max_rows": 1000
-          },
-          "created_at": "2023-01-01T00:00:00Z"
-        }
-      },
-      "default_version": "v1.0.0"
-    },
-    "code_generate": {
-      "name": "code_generate",
-      "description": "代码生成技能，用于生成各种编程语言的代码",
-      "type": "code",
-      "versions": {
-        "v1.0.0": {
-          "config": {
-            "supported_languages": ["python", "javascript", "java", "c++"]
-          },
-          "created_at": "2023-01-01T00:00:00Z"
-        }
-      },
-      "default_version": "v1.0.0"
-    },
-    "code_debug": {
-      "name": "code_debug",
-      "description": "代码调试技能，用于调试和修复代码",
-      "type": "code",
-      "versions": {
-        "v1.0.0": {
-          "config": {
-            "supported_languages": ["python", "javascript"]
-          },
-          "created_at": "2023-01-01T00:00:00Z"
-        }
-      },
-      "default_version": "v1.0.0"
-    },
-    "code_optimize": {
-      "name": "code_optimize",
-      "description": "代码优化技能，用于优化代码性能和可读性",
-      "type": "code",
-      "versions": {
-        "v1.0.0": {
-          "config": {
-            "supported_languages": ["python", "javascript"]
-          },
-          "created_at": "2023-01-01T00:00:00Z"
-        }
-      },
-      "default_version": "v1.0.0"
-    },
-    "todo_create": {
-      "name": "todo_create",
-      "description": "创建待办事项技能",
-      "type": "productivity",
-      "versions": {
-        "v1.0.0": {
-          "config": {
-            "default_priority": "medium"
-          },
-          "created_at": "2023-01-01T00:00:00Z"
-        }
-      },
-      "default_version": "v1.0.0"
-    },
-    "todo_update": {
-      "name": "todo_update",
-      "description": "更新待办事项技能",
-      "type": "productivity",
-      "versions": {
-        "v1.0.0": {
-          "config": {
-            "supported_fields": ["title", "description", "priority", "status", "due_date"]
-          },
-          "created_at": "2023-01-01T00:00:00Z"
-        }
-      },
-      "default_version": "v1.0.0"
-    },
-    "todo_query": {
-      "name": "todo_query",
-      "description": "查询待办事项技能",
-      "type": "productivity",
-      "versions": {
-        "v1.0.0": {
-          "config": {
-            "max_results": 20
-          },
-          "created_at": "2023-01-01T00:00:00Z"
-        }
-      },
-      "default_version": "v1.0.0"
-    }
-  }
+  ]
 }

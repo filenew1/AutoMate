@@ -1,18 +1,30 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useAppStore } from '@/store/useAppStore'
+import { useAgentChat } from '@/hooks/useAgentChat'
 import { Send, Paperclip, Square } from 'lucide-react'
+import { EnhancedMessageBubble } from './EnhancedMessageBubble'
 
 interface ChatContainerProps {
   agentId: string
 }
 
+const SKILL_NAMES = ['official-doc-optimize', 'code_generate', 'code_debug', 'code_optimize', 'todo_create', 'todo_update', 'todo_query'];
+
+const isSkillResponse = (skillUsed?: string): boolean => {
+  if (!skillUsed) return false;
+  return SKILL_NAMES.some(name => skillUsed.toLowerCase().includes(name.toLowerCase()));
+};
+
 export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
-  const { agents, chats, addMessage, setTyping, theme } = useAppStore()
+  const { agents, chats, addMessage, updateMessageContent, setTyping, theme } = useAppStore()
+  const { sendMessage, streamMessage, error: apiError } = useAgentChat()
   const [inputText, setInputText] = useState('')
   const [showScrollButton, setShowScrollButton] = useState(false)
   const [isSending, setIsSending] = useState(false)
+  const currentAiMessageIdRef = useRef<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const chatAreaRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
 
   const agent = agents.flatMap(group => group.agents).find(a => a.id === agentId)
   const chat = chats[agentId] || { messages: [], isTyping: false }
@@ -40,36 +52,232 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
     return () => chatArea.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const handleSend = () => {
-    if (!inputText.trim()) return
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [agentId])
 
+  const handleSend = () => {
+    if (!inputText.trim() || isSending) return
+
+    const userMessage = inputText.trim()
     setIsSending(true)
     addMessage(agentId, {
-      content: inputText,
+      content: userMessage,
       isUser: true,
       status: 'sending',
     })
 
     setInputText('')
 
-    setTimeout(() => {
-      setTyping(agentId, true)
+    const skillUsed = agent?.skills?.[0]
+    const shouldStream = !isSkillResponse(skillUsed)
 
-      setTimeout(() => {
+    if (shouldStream) {
+      handleStreamSend(userMessage, skillUsed)
+    } else {
+      handleNonStreamSend(userMessage, skillUsed)
+    }
+  }
+
+  const handleStreamSend = (userMessage: string, skillUsed?: string) => {
+    setTyping(agentId, true)
+
+    const messageId = addMessage(agentId, {
+      content: '',
+      isUser: false,
+      status: 'sending',
+      isStreaming: true,
+    })
+    currentAiMessageIdRef.current = messageId
+
+    streamMessage(agentId, userMessage, {
+      onChunk: (chunk) => {
+        if (currentAiMessageIdRef.current) {
+          const chat = chats[agentId]
+          const currentMsg = chat?.messages.find(m => m.id === currentAiMessageIdRef.current)
+          const newContent = (currentMsg?.content || '') + chunk
+          updateMessageContent(agentId, currentAiMessageIdRef.current, newContent, true)
+        }
+      },
+      onDone: (fullContent) => {
+        const messageId = currentAiMessageIdRef.current
         setTyping(agentId, false)
         setIsSending(false)
+        currentAiMessageIdRef.current = null
+
+        const skillMatch = fullContent.match(/【技能:\s*([^】]+)】/)
+        const skillActivated = skillMatch ? skillMatch[1] : skillUsed
+        
+        const thinkingMatch = fullContent.match(/(?:思考|分析|推理)[:：]\s*([\s\S]+?)(?=\n\n|$)/i)
+        const thinkingContent = thinkingMatch ? thinkingMatch[1].trim() : undefined
+        
+        const mainContent = fullContent
+          .replace(/【技能:\s*[^】]+】\s*(已激活)?\n*/g, '')
+          .replace(/(?:思考|分析|推理)[:：]\s*[\s\S]+?(?=\n\n|$)/gi, '')
+          .trim()
+
+        if (messageId) {
+          const agentChats = useAppStore.getState().chats[agentId]
+          if (agentChats) {
+            useAppStore.setState({
+              chats: {
+                ...useAppStore.getState().chats,
+                [agentId]: {
+                  ...agentChats,
+                  messages: agentChats.messages.map(m => 
+                    m.id === messageId 
+                      ? { ...m, content: mainContent || fullContent, status: 'sent' as const, skillActivated, thinkingContent, isStreaming: false }
+                      : m
+                  ),
+                },
+              },
+            })
+          }
+        }
+      },
+      onError: (error) => {
+        setTyping(agentId, false)
+        setIsSending(false)
+        currentAiMessageIdRef.current = null
         addMessage(agentId, {
-          content: `这是智能体的回复：${inputText}`,
+          content: error,
           isUser: false,
-          status: 'sent',
+          status: 'failed',
         })
-      }, 1000)
-    }, 500)
+      },
+    })
+  }
+
+  const handleNonStreamSend = (userMessage: string, _skillUsed?: string) => {
+    setTyping(agentId, true)
+
+    sendMessage(agentId, userMessage).then((response) => {
+      setTyping(agentId, false)
+      setIsSending(false)
+
+      if (response) {
+        if (response.error) {
+          addMessage(agentId, {
+            content: `错误: ${response.error}`,
+            isUser: false,
+            status: 'failed',
+          })
+        } else {
+          const skillMatch = response.content.match(/【技能:\s*([^】]+)】/)
+          const skillActivated = skillMatch ? skillMatch[1] : response.skill_used
+          
+          const thinkingMatch = response.content.match(/(?:思考|分析|推理)[:：]\s*([\s\S]+?)(?=\n\n|$)/i)
+          const thinkingContent = thinkingMatch ? thinkingMatch[1].trim() : undefined
+          
+          const mainContent = response.content
+            .replace(/【技能:\s*[^】]+】\s*(已激活)?\n*/g, '')
+            .replace(/(?:思考|分析|推理)[:：]\s*[\s\S]+?(?=\n\n|$)/gi, '')
+            .trim()
+
+          addMessage(agentId, {
+            content: mainContent || response.content,
+            isUser: false,
+            status: 'sent',
+            skillActivated: skillActivated,
+            thinkingContent: thinkingContent,
+          })
+          if (response.skill_used) {
+            console.log(`Used skill: ${response.skill_used}`)
+          }
+        }
+      } else {
+        addMessage(agentId, {
+          content: apiError || '发送消息失败，请稍后重试',
+          isUser: false,
+          status: 'failed',
+        })
+      }
+    }).catch((err) => {
+      setTyping(agentId, false)
+      setIsSending(false)
+      addMessage(agentId, {
+        content: err instanceof Error ? err.message : '发送消息失败，请稍后重试',
+        isUser: false,
+        status: 'failed',
+      })
+    })
   }
 
   const handleStop = () => {
     setIsSending(false)
     setTyping(agentId, false)
+    currentAiMessageIdRef.current = null
+  }
+
+  const handleRetry = () => {
+    const chat = chats[agentId]
+    if (!chat || chat.messages.length === 0 || isSending) return
+
+    let lastUserMessage = ''
+    for (let i = chat.messages.length - 1; i >= 0; i--) {
+      if (chat.messages[i].isUser) {
+        lastUserMessage = chat.messages[i].content
+        break
+      }
+    }
+
+    if (!lastUserMessage) return
+
+    const removedContent = useAppStore.getState().removeLastAiMessage(agentId)
+    if (!removedContent) return
+
+    setIsSending(true)
+    setTyping(agentId, true)
+
+    sendMessage(agentId, lastUserMessage).then((response) => {
+      setTyping(agentId, false)
+      setIsSending(false)
+
+      if (response) {
+        if (response.error) {
+          addMessage(agentId, {
+            content: `错误: ${response.error}`,
+            isUser: false,
+            status: 'failed',
+          })
+        } else {
+          const skillMatch = response.content.match(/【技能:\s*([^】]+)】/)
+          const skillActivated = skillMatch ? skillMatch[1] : response.skill_used
+          
+          const thinkingMatch = response.content.match(/(?:思考|分析|推理)[:：]\s*([\s\S]+?)(?=\n\n|$)/i)
+          const thinkingContent = thinkingMatch ? thinkingMatch[1].trim() : undefined
+          
+          const mainContent = response.content
+            .replace(/【技能:\s*[^】]+】\s*(已激活)?\n*/g, '')
+            .replace(/(?:思考|分析|推理)[:：]\s*[\s\S]+?(?=\n\n|$)/gi, '')
+            .trim()
+
+          addMessage(agentId, {
+            content: mainContent || response.content,
+            isUser: false,
+            status: 'sent',
+            skillActivated: skillActivated,
+            thinkingContent: thinkingContent,
+          })
+        }
+      } else {
+        addMessage(agentId, {
+          content: apiError || '重新生成失败，请稍后重试',
+          isUser: false,
+          status: 'failed',
+        })
+      }
+    }).catch((err) => {
+      setTyping(agentId, false)
+      setIsSending(false)
+      addMessage(agentId, {
+        content: err instanceof Error ? err.message : '重新生成失败，请稍后重试',
+        isUser: false,
+        status: 'failed',
+      })
+    })
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -108,16 +316,6 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
   const getEmptyMessageClasses = () => {
     let baseClasses = 'flex items-center justify-center h-full'
     baseClasses += theme === 'dark' ? ' text-gray-500' : ' text-gray-400'
-    return baseClasses
-  }
-
-  const getMessageClasses = (isUser: boolean) => {
-    let baseClasses = 'max-w-[500px] px-4 py-2 rounded-lg break-words'
-    if (isUser) {
-      baseClasses += ' bg-[#95EC69] text-gray-900 rounded-tr-sm'
-    } else {
-      baseClasses += theme === 'dark' ? ' bg-gray-700 text-white rounded-bl-sm' : ' bg-gray-200 text-gray-900 rounded-bl-sm'
-    }
     return baseClasses
   }
 
@@ -169,7 +367,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
 
   const getInputWrapperClasses = () => {
     let baseClasses = 'border rounded-lg overflow-hidden'
-    baseClasses += theme === 'dark' ? ' border-gray-600' : ' border-gray-200'
+    baseClasses += theme === 'dark' ? ' border-gray-600' : ' border-gray-300'
     return baseClasses
   }
 
@@ -205,6 +403,22 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
           </svg>
         )
     }
+  }
+
+  const getUserAvatarClasses = () => {
+    return theme === 'dark' ? 'w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex-shrink-0 shadow-lg flex items-center justify-center' : 'w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex-shrink-0 shadow-md flex items-center justify-center'
+  }
+
+  const getAgentAvatarClasses = () => {
+    const avatarColor = agent?.avatarColor || 'blue'
+    const gradient = getAvatarGradient(avatarColor)
+    return theme === 'dark' 
+      ? `w-10 h-10 rounded-full bg-gradient-to-br ${gradient} flex-shrink-0 shadow-lg flex items-center justify-center` 
+      : `w-10 h-10 rounded-full bg-gradient-to-br ${gradient} flex-shrink-0 shadow-md flex items-center justify-center`
+  }
+
+  const getMessageContainerClasses = (isUser: boolean) => {
+    return `flex ${isUser ? 'justify-end' : 'justify-start'} items-start gap-2`
   }
 
   const getAttachmentButtonClasses = () => {
@@ -282,12 +496,32 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
                   </span>
                 </div>
               )}
-              <div
-                className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
-              >
-                <div className={getMessageClasses(message.isUser)}>
-                  <p className="text-sm">{message.content}</p>
-                </div>
+              <div className={getMessageContainerClasses(message.isUser)}>
+                {!message.isUser && (
+                  <div className={getAgentAvatarClasses()}>
+                    {agent ? getAvatarIcon(agent.avatarColor) : (
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                    )}
+                  </div>
+                )}
+                <EnhancedMessageBubble
+                  content={message.content}
+                  isUser={message.isUser}
+                  status={message.status}
+                  skillActivated={message.skillActivated}
+                  thinkingContent={message.thinkingContent}
+                  isStreaming={message.isStreaming}
+                  onRetry={!message.isUser ? handleRetry : undefined}
+                />
+                {message.isUser && (
+                  <div className={getUserAvatarClasses()}>
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                )}
               </div>
             </React.Fragment>
           )
@@ -324,6 +558,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
         <div className={getInputWrapperClasses()}>
           <div className="relative flex flex-grow">
             <textarea
+              ref={inputRef}
               id={`message-input-${agentId}`}
               placeholder="输入消息..."
               value={inputText}

@@ -12,7 +12,18 @@ export default defineConfig({
   server: {
     port: 3000,
     open: true,
+    fs: {
+      allow: ['..']
+    },
+    proxy: {
+      '/api/chat/completions': {
+        target: 'https://api.fgw.sz.gov.cn:9016',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '/modelgateway/compatible-model/v1'),
+      },
+    },
   },
+  publicDir: 'public',
   build: {
     outDir: 'dist',
     sourcemap: true,
