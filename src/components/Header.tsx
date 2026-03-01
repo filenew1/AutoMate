@@ -28,8 +28,13 @@ export const Header: React.FC = () => {
     return baseClasses
   }
 
-  const getAvatarGradient = (color: string) => {
-    switch (color) {
+  const getAvatarGradient = (agent: { avatar?: string; avatarColor?: string }) => {
+    if (agent.avatar) {
+      if (agent.avatar === 'avatar-1.png') return 'from-blue-500 to-blue-600'
+      if (agent.avatar === 'avatar-2.png') return 'from-purple-500 to-purple-600'
+      if (agent.avatar === 'avatar-3.png') return 'from-orange-500 to-orange-600'
+    }
+    switch (agent.avatarColor) {
       case 'purple':
         return 'from-purple-500 to-purple-600'
       case 'orange':
@@ -39,18 +44,41 @@ export const Header: React.FC = () => {
     }
   }
 
-  const getAvatarIcon = (color: string) => {
-    switch (color) {
+  const getAvatarIcon = (agent: { avatar?: string; avatarColor?: string }) => {
+    if (agent.avatar) {
+      if (agent.avatar === 'avatar-1.png') {
+        return (
+          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+        )
+      }
+      if (agent.avatar === 'avatar-2.png') {
+        return (
+          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+          </svg>
+        )
+      }
+      if (agent.avatar === 'avatar-3.png') {
+        return (
+          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+          </svg>
+        )
+      }
+    }
+    switch (agent.avatarColor) {
       case 'purple':
         return (
           <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
           </svg>
         )
       case 'orange':
         return (
           <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
           </svg>
         )
       default:
@@ -98,8 +126,8 @@ export const Header: React.FC = () => {
           }}
           aria-label="返回首页"
         >
-          <div className={`w-10 h-10 bg-gradient-to-br ${selectedAgent ? getAvatarGradient(selectedAgent.avatarColor) : 'from-blue-500 to-purple-600'} rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-blue-500/30 flex-shrink-0`}>
-            {selectedAgent ? getAvatarIcon(selectedAgent.avatarColor) : (
+          <div className={`w-10 h-10 bg-gradient-to-br ${selectedAgent ? getAvatarGradient(selectedAgent) : 'from-blue-500 to-purple-600'} rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-blue-500/30 flex-shrink-0`}>
+            {selectedAgent ? getAvatarIcon(selectedAgent) : (
               <svg className="w-6 h-6 text-white transition-transform duration-300 group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>

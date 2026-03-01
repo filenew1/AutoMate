@@ -105,7 +105,7 @@ export async function* streamChatWithAgent(
   ];
 
   const apiUrl = agent.config.url.includes('api.fgw.sz.gov.cn') 
-    ? '/api/chat/completions/stream'
+    ? '/api/chat/completions'
     : agent.config.url;
 
   const fullUrl = apiUrl.includes('/chat/completions') ? apiUrl : `${apiUrl}/chat/completions`;

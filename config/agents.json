@@ -12,7 +12,7 @@
           "config": {
             "url": "https://api.fgw.sz.gov.cn:9016/modelgateway/compatible-model/v1",
             "api_key": "sk-Sy3i0ApbXU9uVIB512352453690a47C0A3883f77F4736211",
-            "model": "Qwen3-30B-A3B"
+            "model": "DeepSeek-R1-0528"
           },
           "skills": [
             {

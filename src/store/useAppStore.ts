@@ -70,6 +70,7 @@ interface AppState {
   toggleGroup: (groupName: string) => void
   addMessage: (agentId: string, message: Omit<Message, 'id' | 'timestamp'>) => string
   updateMessageContent: (agentId: string, messageId: string, newContent: string, isStreaming?: boolean) => void
+  updateMessageThinkingContent: (agentId: string, messageId: string, thinkingContent: string) => void
   removeLastAiMessage: (agentId: string) => string | null
   setTyping: (agentId: string, isTyping: boolean) => void
   updateUserSettings: (settings: Partial<UserSettings>) => void
@@ -185,7 +186,29 @@ export const useAppStore = create<AppState>()((set) => ({
     };
   }),
 
-  removeLastAiMessage: (agentId) => {
+  updateMessageThinkingContent: (agentId, messageId, thinkingContent) => set((state) => {
+    const agentChats = state.chats[agentId];
+    if (!agentChats) return state;
+
+    const updatedMessages = agentChats.messages.map((msg) => {
+      if (msg.id === messageId) {
+        return { ...msg, thinkingContent };
+      }
+      return msg;
+    });
+
+    return {
+      chats: {
+        ...state.chats,
+        [agentId]: {
+          ...agentChats,
+          messages: updatedMessages,
+        },
+      },
+    };
+  }),
+
+  removeLastAiMessage: (agentId: string) => {
     let removedContent: string | null = null
     set((state) => {
       const agentChats = state.chats[agentId]

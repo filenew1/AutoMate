@@ -8,16 +8,9 @@ interface ChatContainerProps {
   agentId: string
 }
 
-const SKILL_NAMES = ['official-doc-optimize', 'code_generate', 'code_debug', 'code_optimize', 'todo_create', 'todo_update', 'todo_query'];
-
-const isSkillResponse = (skillUsed?: string): boolean => {
-  if (!skillUsed) return false;
-  return SKILL_NAMES.some(name => skillUsed.toLowerCase().includes(name.toLowerCase()));
-};
-
 export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
-  const { agents, chats, addMessage, updateMessageContent, setTyping, theme } = useAppStore()
-  const { sendMessage, streamMessage, error: apiError } = useAgentChat()
+  const { agents, chats, addMessage, updateMessageContent, updateMessageThinkingContent, setTyping, theme } = useAppStore()
+  const { streamMessage } = useAgentChat()
   const [inputText, setInputText] = useState('')
   const [showScrollButton, setShowScrollButton] = useState(false)
   const [isSending, setIsSending] = useState(false)
@@ -29,8 +22,10 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
   const agent = agents.flatMap(group => group.agents).find(a => a.id === agentId)
   const chat = chats[agentId] || { messages: [], isTyping: false }
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  const scrollToBottom = (smooth?: boolean) => {
+    messagesEndRef.current?.scrollIntoView({ 
+      behavior: (smooth ?? true) ? 'smooth' : 'auto' 
+    })
   }
 
   const handleScroll = () => {
@@ -71,14 +66,12 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
 
     setInputText('')
 
-    const skillUsed = agent?.skills?.[0]
-    const shouldStream = !isSkillResponse(skillUsed)
-
-    if (shouldStream) {
-      handleStreamSend(userMessage, skillUsed)
-    } else {
-      handleNonStreamSend(userMessage, skillUsed)
+    if (inputRef.current) {
+      inputRef.current.style.height = 'auto'
     }
+
+    const skillUsed = agent?.skills?.[0]
+    handleStreamSend(userMessage, skillUsed)
   }
 
   const handleStreamSend = (userMessage: string, skillUsed?: string) => {
@@ -92,16 +85,51 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
     })
     currentAiMessageIdRef.current = messageId
 
+    let accumulatedContent = ''
+    let updateTimer: ReturnType<typeof setTimeout> | null = null
+
+    const flushContent = () => {
+      if (accumulatedContent && currentAiMessageIdRef.current) {
+        updateMessageContent(agentId, currentAiMessageIdRef.current, accumulatedContent, true)
+        scrollToBottom(false)
+      }
+    }
+
     streamMessage(agentId, userMessage, {
       onChunk: (chunk) => {
-        if (currentAiMessageIdRef.current) {
-          const chat = chats[agentId]
-          const currentMsg = chat?.messages.find(m => m.id === currentAiMessageIdRef.current)
-          const newContent = (currentMsg?.content || '') + chunk
-          updateMessageContent(agentId, currentAiMessageIdRef.current, newContent, true)
+        accumulatedContent += chunk
+        
+        if (updateTimer) {
+          clearTimeout(updateTimer)
+        }
+        
+        if (accumulatedContent.length >= 1) {
+          flushContent()
+        } else {
+          updateTimer = setTimeout(() => {
+            flushContent()
+          }, 10)
+        }
+
+        const thinkMatch = accumulatedContent.match(/<think>([\s\S]*?)<\/think>/i)
+        if (thinkMatch) {
+          const rawThinking = thinkMatch[1]
+          const thinkingContent = rawThinking
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&amp;/g, '&')
+            .trim()
+          if (currentAiMessageIdRef.current) {
+            updateMessageThinkingContent(agentId, currentAiMessageIdRef.current, thinkingContent)
+          }
         }
       },
       onDone: (fullContent) => {
+        if (updateTimer) {
+          clearTimeout(updateTimer)
+        }
+        flushContent()
+
         const messageId = currentAiMessageIdRef.current
         setTyping(agentId, false)
         setIsSending(false)
@@ -110,11 +138,23 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
         const skillMatch = fullContent.match(/【技能:\s*([^】]+)】/)
         const skillActivated = skillMatch ? skillMatch[1] : skillUsed
         
+        const thinkMatch = fullContent.match(/<think>([\s\S]*?)<\/think>/i)
         const thinkingMatch = fullContent.match(/(?:思考|分析|推理)[:：]\s*([\s\S]+?)(?=\n\n|$)/i)
-        const thinkingContent = thinkingMatch ? thinkingMatch[1].trim() : undefined
+
+        let thinkingContent: string | undefined
+        if (thinkMatch) {
+          thinkingContent = thinkMatch[1]
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&amp;/g, '&')
+            .trim()
+        } else if (thinkingMatch) {
+          thinkingContent = thinkingMatch[1].trim()
+        }
         
         const mainContent = fullContent
           .replace(/【技能:\s*[^】]+】\s*(已激活)?\n*/g, '')
+          .replace(/<think>[\s\S]*?<\/think>/gi, '')
           .replace(/(?:思考|分析|推理)[:：]\s*[\s\S]+?(?=\n\n|$)/gi, '')
           .trim()
 
@@ -150,61 +190,6 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
     })
   }
 
-  const handleNonStreamSend = (userMessage: string, _skillUsed?: string) => {
-    setTyping(agentId, true)
-
-    sendMessage(agentId, userMessage).then((response) => {
-      setTyping(agentId, false)
-      setIsSending(false)
-
-      if (response) {
-        if (response.error) {
-          addMessage(agentId, {
-            content: `错误: ${response.error}`,
-            isUser: false,
-            status: 'failed',
-          })
-        } else {
-          const skillMatch = response.content.match(/【技能:\s*([^】]+)】/)
-          const skillActivated = skillMatch ? skillMatch[1] : response.skill_used
-          
-          const thinkingMatch = response.content.match(/(?:思考|分析|推理)[:：]\s*([\s\S]+?)(?=\n\n|$)/i)
-          const thinkingContent = thinkingMatch ? thinkingMatch[1].trim() : undefined
-          
-          const mainContent = response.content
-            .replace(/【技能:\s*[^】]+】\s*(已激活)?\n*/g, '')
-            .replace(/(?:思考|分析|推理)[:：]\s*[\s\S]+?(?=\n\n|$)/gi, '')
-            .trim()
-
-          addMessage(agentId, {
-            content: mainContent || response.content,
-            isUser: false,
-            status: 'sent',
-            skillActivated: skillActivated,
-            thinkingContent: thinkingContent,
-          })
-          if (response.skill_used) {
-            console.log(`Used skill: ${response.skill_used}`)
-          }
-        }
-      } else {
-        addMessage(agentId, {
-          content: apiError || '发送消息失败，请稍后重试',
-          isUser: false,
-          status: 'failed',
-        })
-      }
-    }).catch((err) => {
-      setTyping(agentId, false)
-      setIsSending(false)
-      addMessage(agentId, {
-        content: err instanceof Error ? err.message : '发送消息失败，请稍后重试',
-        isUser: false,
-        status: 'failed',
-      })
-    })
-  }
-
   const handleStop = () => {
     setIsSending(false)
     setTyping(agentId, false)
@@ -212,8 +197,13 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
   }
 
   const handleRetry = () => {
+    console.log('[Retry] Starting retry...')
     const chat = chats[agentId]
-    if (!chat || chat.messages.length === 0 || isSending) return
+    console.log('[Retry] Chat:', chat ? 'exists' : 'null', 'messages:', chat?.messages.length, 'isSending:', isSending)
+    if (!chat || chat.messages.length === 0 || isSending) {
+      console.log('[Retry] Early return: no chat, no messages, or isSending')
+      return
+    }
 
     let lastUserMessage = ''
     for (let i = chat.messages.length - 1; i >= 0; i--) {
@@ -223,61 +213,16 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
       }
     }
 
+    console.log('[Retry] Last user message:', lastUserMessage ? 'found' : 'not found')
     if (!lastUserMessage) return
 
     const removedContent = useAppStore.getState().removeLastAiMessage(agentId)
+    console.log('[Retry] Removed content:', removedContent ? 'success' : 'failed')
     if (!removedContent) return
 
-    setIsSending(true)
-    setTyping(agentId, true)
-
-    sendMessage(agentId, lastUserMessage).then((response) => {
-      setTyping(agentId, false)
-      setIsSending(false)
-
-      if (response) {
-        if (response.error) {
-          addMessage(agentId, {
-            content: `错误: ${response.error}`,
-            isUser: false,
-            status: 'failed',
-          })
-        } else {
-          const skillMatch = response.content.match(/【技能:\s*([^】]+)】/)
-          const skillActivated = skillMatch ? skillMatch[1] : response.skill_used
-          
-          const thinkingMatch = response.content.match(/(?:思考|分析|推理)[:：]\s*([\s\S]+?)(?=\n\n|$)/i)
-          const thinkingContent = thinkingMatch ? thinkingMatch[1].trim() : undefined
-          
-          const mainContent = response.content
-            .replace(/【技能:\s*[^】]+】\s*(已激活)?\n*/g, '')
-            .replace(/(?:思考|分析|推理)[:：]\s*[\s\S]+?(?=\n\n|$)/gi, '')
-            .trim()
-
-          addMessage(agentId, {
-            content: mainContent || response.content,
-            isUser: false,
-            status: 'sent',
-            skillActivated: skillActivated,
-            thinkingContent: thinkingContent,
-          })
-        }
-      } else {
-        addMessage(agentId, {
-          content: apiError || '重新生成失败，请稍后重试',
-          isUser: false,
-          status: 'failed',
-        })
-      }
-    }).catch((err) => {
-      setTyping(agentId, false)
-      setIsSending(false)
-      addMessage(agentId, {
-        content: err instanceof Error ? err.message : '重新生成失败，请稍后重试',
-        isUser: false,
-        status: 'failed',
-      })
-    })
+    console.log('[Retry] Calling handleStreamSend...')
+    const skillUsed = agent?.skills?.[0]
+    handleStreamSend(lastUserMessage, skillUsed)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -544,7 +489,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
 
       {showScrollButton && (
         <button
-          onClick={scrollToBottom}
+          onClick={() => scrollToBottom()}
           className="absolute bottom-36 left-1/2 -translate-x-1/2 w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 z-50 cursor-pointer flex items-center justify-center"
           title="滚动到底部"
         >
