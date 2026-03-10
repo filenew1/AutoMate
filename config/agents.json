@@ -12,7 +12,7 @@
           "config": {
             "url": "https://api.fgw.sz.gov.cn:9016/modelgateway/compatible-model/v1",
             "api_key": "sk-Sy3i0ApbXU9uVIB512352453690a47C0A3883f77F4736211",
-            "model": "DeepSeek-R1-0528"
+            "model": "Qwen3-235B-A22B-Instruct"
           },
           "skills": [
             {
@@ -20,6 +20,13 @@
               "description": "官方文档优化技能，用于优化官方文档的内容",
               "type": "information",
               "storage_path": "./skills/official-doc-optimize",
+              "version": "v1.0.0"
+            },
+            {
+              "name": "todo-query",
+              "description": "待办查询技能，用于查询待办事项",
+              "type": "todo",
+              "storage_path": "./skills/todo-query",
               "version": "v1.0.0"
             }
           ]

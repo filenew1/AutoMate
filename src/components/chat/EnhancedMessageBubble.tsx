@@ -7,7 +7,7 @@ interface EnhancedMessageBubbleProps {
   content: string
   isUser: boolean
   status?: 'sending' | 'sent' | 'delivered' | 'read' | 'failed'
-  skillActivated?: string
+  skillActivated?: string[]
   thinkingContent?: string
   isStreaming?: boolean
   onRetry?: () => void
@@ -96,13 +96,17 @@ export const EnhancedMessageBubble: React.FC<EnhancedMessageBubbleProps> = ({
   }
 
   const renderSkillActivation = () => {
-    if (!skillActivated) return null
+    if (!skillActivated || skillActivated.length === 0) return null
 
     return (
-      <div className={`mb-2 px-2 py-1 rounded-md inline-flex items-center gap-1.5 ${getSkillBadgeClasses()}`}>
-        <Sparkles className="w-3.5 h-3.5" />
-        <span className="text-xs font-medium">技能: {skillActivated}</span>
-        <span className="text-xs opacity-70">已激活</span>
+      <div className="mb-2 flex flex-wrap gap-1.5">
+        {skillActivated.map((skill, index) => (
+          <div key={index} className={`px-2 py-1 rounded-md inline-flex items-center gap-1.5 ${getSkillBadgeClasses()}`}>
+            <Sparkles className="w-3.5 h-3.5" />
+            <span className="text-xs font-medium">技能: {skill}</span>
+            <span className="text-xs opacity-70">已激活</span>
+          </div>
+        ))}
       </div>
     )
   }
@@ -185,14 +189,11 @@ export const EnhancedMessageBubble: React.FC<EnhancedMessageBubbleProps> = ({
   }
 
   return (
-    <div className="max-w-[800px] w-full">
+    <div className={isUser ? 'max-w-[80%]' : 'max-w-[80%]'}>
       {renderThinkingContent()}
       <div className={`px-4 py-2 rounded-lg break-all ${getBubbleStyle()}`}>
         <div className="text-sm leading-relaxed prose prose-sm max-w-none dark:prose-invert break-all">
           {renderMarkdownContent()}
-          {isStreaming && (
-            <span className="inline-block w-2 h-4 bg-current animate-pulse ml-0.5" />
-          )}
         </div>
         <div className="flex items-center justify-end mt-2">
           {renderActionButtons()}
@@ -205,7 +206,7 @@ export const EnhancedMessageBubble: React.FC<EnhancedMessageBubbleProps> = ({
           )}
         </div>
       </div>
-      {skillActivated && (
+      {(skillActivated && skillActivated.length > 0) && (
         <div className="mt-2">
           {renderSkillActivation()}
         </div>

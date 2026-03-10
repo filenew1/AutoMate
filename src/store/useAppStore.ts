@@ -20,7 +20,7 @@ export interface Message {
   isUser: boolean
   timestamp: string
   status: 'sending' | 'sent' | 'delivered' | 'read' | 'failed'
-  skillActivated?: string
+  skillActivated?: string[]
   thinkingContent?: string
   isStreaming?: boolean
 }

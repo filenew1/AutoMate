@@ -16,10 +16,15 @@ export default defineConfig({
       allow: ['..']
     },
     proxy: {
-      '/api/chat/completions': {
+      '/api/proxy': {
         target: 'https://api.fgw.sz.gov.cn:9016',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '/modelgateway/compatible-model/v1'),
+        rewrite: (path) => path.replace(/^\/api\/proxy/, '/modelgateway/compatible-model/v1'),
+      },
+      '/api/skills': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/skills/, '/api/skills'),
       },
     },
   },

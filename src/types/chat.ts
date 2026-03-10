@@ -104,13 +104,16 @@ export async function* streamChatWithAgent(
     { role: 'user', content: userMessage }
   ];
 
-  const apiUrl = agent.config.url.includes('api.fgw.sz.gov.cn') 
-    ? '/api/chat/completions'
-    : agent.config.url;
+  const fullUrl = agent.config.url.includes('/chat/completions') 
+    ? agent.config.url 
+    : `${agent.config.url}/chat/completions`;
 
-  const fullUrl = apiUrl.includes('/chat/completions') ? apiUrl : `${apiUrl}/chat/completions`;
+  const isDirectApi = fullUrl.includes('api.fgw.sz.gov.cn');
+  const requestUrl = isDirectApi 
+    ? '/api/proxy/chat/completions' 
+    : fullUrl;
 
-  const response = await fetch(fullUrl, {
+  const response = await fetch(requestUrl, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${agent.config.api_key}`,
@@ -196,13 +199,18 @@ export async function chatWithAgent(
     { role: 'user', content: userMessage }
   ];
 
-  const apiUrl = agent.config.url.includes('api.fgw.sz.gov.cn') 
-    ? '/api/chat/completions'
-    : agent.config.url;
+  const fullUrl = agent.config.url.includes('/chat/completions') 
+    ? agent.config.url 
+    : `${agent.config.url}/chat/completions`;
+
+  const isDirectApi = fullUrl.includes('api.fgw.sz.gov.cn');
+  const requestUrl = isDirectApi 
+    ? '/api/proxy/chat/completions' 
+    : fullUrl;
 
   try {
     const response = await axios.post(
-      apiUrl.includes('/chat/completions') ? apiUrl : `${apiUrl}/chat/completions`,
+      requestUrl,
       {
         model: agent.config.model,
         messages: messages,

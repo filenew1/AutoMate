@@ -3,12 +3,29 @@ import { useAppStore } from '@/store/useAppStore'
 import { useAgentChat } from '@/hooks/useAgentChat'
 import { Send, Paperclip, Square } from 'lucide-react'
 import { EnhancedMessageBubble } from './EnhancedMessageBubble'
+import { saveChatMessage, saveSkillCall, getLast24HoursChatMessages, deleteLastAiMessage, deleteSkillCallByMessageId, initHybridStorage } from '@/services/hybridStorage'
+import { callSkill } from '@/services/skillService'
 
 interface ChatContainerProps {
   agentId: string
 }
 
 export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
+  const [isInitialized, setIsInitialized] = useState(false)
+  
+  useEffect(() => {
+    const init = async () => {
+      try {
+        await initHybridStorage()
+        console.log('[ChatContainer] 混合存储初始化完成')
+        setIsInitialized(true)
+      } catch (err) {
+        console.error('混合存储初始化失败:', err)
+        setIsInitialized(true)
+      }
+    }
+    init()
+  }, [])
   const { agents, chats, addMessage, updateMessageContent, updateMessageThinkingContent, setTyping, theme } = useAppStore()
   const { streamMessage } = useAgentChat()
   const [inputText, setInputText] = useState('')
@@ -53,11 +70,155 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
     }
   }, [agentId])
 
+  useEffect(() => {
+    if (!isInitialized || !agentId) return
+    
+    const chat = chats[agentId]
+    if (chat?.messages?.length > 0) return
+    
+    const loadHistory = async () => {
+      try {
+        console.log('[ChatContainer] 开始加载历史记录, agentId:', agentId)
+        const historyMessages = await getLast24HoursChatMessages(agentId)
+        console.log('[ChatContainer] 获取到历史消息, count:', historyMessages.length)
+        
+        const currentChat = chats[agentId]
+        if (historyMessages.length > 0 && (!currentChat || currentChat.messages.length === 0)) {
+          for (const msg of historyMessages) {
+            addMessage(agentId, {
+              content: msg.content,
+              isUser: msg.message_type === 'user',
+              status: msg.status as 'sending' | 'sent' | 'delivered' | 'read' | 'failed',
+              skillActivated: msg.skill_activated ? msg.skill_activated.split(',') : undefined,
+              thinkingContent: msg.thinking_content,
+            })
+          }
+          console.log('[ChatContainer] 已加载', historyMessages.length, '条历史消息')
+        }
+      } catch (err) {
+        console.error('加载历史记录失败:', err)
+      }
+    }
+    loadHistory()
+  }, [agentId, isInitialized])
+
+  const skillKeywordMap: Record<string, string[]> = {
+    'todo-query': ['待办', 'todo', '查询待办', '待办事项', '待办查询', '待办', '有多少个待办', '待办事项'],
+    'official-doc-optimize': ['文档', '优化', 'doc', '文档优化'],
+    'code_generate': ['代码生成', '生成代码', '写代码'],
+    'code_debug': ['调试', 'debug', '修复代码'],
+    'code_optimize': ['优化代码', '代码优化'],
+    'todo_create': ['创建待办', '新建待办', '添加待办'],
+    'todo_update': ['更新待办', '修改待办'],
+    'todo_query': ['查询待办', '待办查询', '待办', '有多少个待办', '待办事项'],
+  }
+
+  const findActivatedSkills = (userMessage: string, skills?: string[]): string[] => {
+    if (!skills || skills.length === 0) return [];
+    
+    const activatedSkills: string[] = [];
+    const messageLower = userMessage.toLowerCase();
+    const messageClean = messageLower.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '');
+    
+    for (const skillName of skills) {
+      const keywords = skillKeywordMap[skillName] || [];
+      for (const keyword of keywords) {
+        const keywordLower = keyword.toLowerCase();
+        if (messageLower.includes(keywordLower) || messageClean.includes(keywordLower)) {
+          if (!activatedSkills.includes(skillName)) {
+            activatedSkills.push(skillName);
+          }
+        }
+      }
+    }
+    
+    if (activatedSkills.length > 0) return activatedSkills;
+    
+    for (const skillName of skills) {
+      const skillNameLower = skillName.toLowerCase();
+      const skillKeywords = [
+        skillNameLower,
+        skillName.replace(/-/g, '').replace(/_/g, ''),
+      ];
+      
+      for (const keyword of skillKeywords) {
+        if (keyword && messageLower.includes(keyword)) {
+          if (!activatedSkills.includes(skillName)) {
+            activatedSkills.push(skillName);
+          }
+        }
+      }
+
+      const skillParts = skillName.toLowerCase().split(/[-_]/);
+      for (const part of skillParts) {
+        if (part && messageLower.includes(part)) {
+          if (!activatedSkills.includes(skillName)) {
+            activatedSkills.push(skillName);
+          }
+        }
+      }
+      
+      for (const part of skillParts) {
+        if (part && messageClean.includes(part)) {
+          if (!activatedSkills.includes(skillName)) {
+            activatedSkills.push(skillName);
+          }
+        }
+      }
+    }
+    
+    return activatedSkills;
+  }
+
+  const executeSkillsBeforeResponse = async (userMessage: string, activatedSkills: string[]): Promise<{ skillResults: string; hasSkills: boolean }> => {
+  console.log('[executeSkillsBeforeResponse] 开始在 AI 回复前执行技能，activatedSkills:', activatedSkills)
+  if (!activatedSkills || activatedSkills.length === 0) {
+    console.log('[executeSkillsBeforeResponse] 没有激活的技能')
+    return { skillResults: '', hasSkills: false };
+    }
+
+  const skillResults: string[] = [];
+
+  console.log('[executeSkillsBeforeResponse] 进入 for 循环，技能数量:', activatedSkills.length)
+
+    for(const skillName of activatedSkills) {
+    console.log('[executeSkillsBeforeResponse] 处理技能:', skillName)
+      try {
+      console.log(`[Skill] 执行技能：${skillName}, 输入：${userMessage}`);
+      const result = await callSkill(skillName, { input: userMessage }, undefined, agentId);
+      console.log(`[Skill] 技能结果:`, result);
+        
+      if (result.success && result.result) {
+        skillResults.push(`【${skillName} 执行结果】\n${result.result}`);
+        } else if (result.error) {
+        skillResults.push(`【${skillName} 执行失败】\n${result.error}`);
+        }
+      } catch (error) {
+      console.error(`[Skill] 技能 ${skillName} 执行异常:`, error);
+      skillResults.push(`【${skillName} 执行异常】\n${error instanceof Error ? error.message: String(error)}`);
+      }
+    }
+
+  if (skillResults.length > 0) {
+    return { 
+      skillResults: skillResults.join('\n\n'),
+        hasSkills: true
+      };
+    }
+
+  return { skillResults: '', hasSkills: false };
+  }
+
   const handleSend = () => {
     if (!inputText.trim() || isSending) return
 
     const userMessage = inputText.trim()
     setIsSending(true)
+    
+    saveChatMessage(agentId, agent?.name || '智能体', userMessage, 'user').catch(err => 
+      console.error('保存用户消息失败:', err)
+    )
+    
     addMessage(agentId, {
       content: userMessage,
       isUser: true,
@@ -70,15 +231,29 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
       inputRef.current.style.height = 'auto'
     }
 
-    const skillUsed = agent?.skills?.[0]
-    handleStreamSend(userMessage, skillUsed)
+    const skillActivated = findActivatedSkills(userMessage, agent?.skills)
+    console.log('[ChatContainer] 发送消息:', userMessage, '技能:', skillActivated, '可用技能:', agent?.skills)
+    handleStreamSend(userMessage, skillActivated)
   }
 
-  const handleStreamSend = (userMessage: string, skillUsed?: string) => {
+  const handleStreamSend = async (userMessage: string, skillActivated?: string[]) => {
+    // 先执行技能（如果有）
+   const finalSkillActivated = skillActivated && skillActivated.length > 0 
+      ? skillActivated 
+      : findActivatedSkills(userMessage, agent?.skills)
+    
+    let skillContext = '';
+   if (finalSkillActivated && finalSkillActivated.length > 0) {
+     const skillResult = await executeSkillsBeforeResponse(userMessage, finalSkillActivated);
+     if (skillResult.hasSkills) {
+       skillContext = skillResult.skillResults;
+      }
+    }
+
     setTyping(agentId, true)
 
-    const messageId = addMessage(agentId, {
-      content: '',
+   const messageId = addMessage(agentId, {
+     content: '',
       isUser: false,
       status: 'sending',
       isStreaming: true,
@@ -88,14 +263,19 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
     let accumulatedContent = ''
     let updateTimer: ReturnType<typeof setTimeout> | null = null
 
-    const flushContent = () => {
-      if (accumulatedContent && currentAiMessageIdRef.current) {
+   const flushContent = () => {
+     if (accumulatedContent && currentAiMessageIdRef.current) {
         updateMessageContent(agentId, currentAiMessageIdRef.current, accumulatedContent, true)
         scrollToBottom(false)
       }
     }
 
-    streamMessage(agentId, userMessage, {
+    // 如果有技能结果，将其添加到用户消息中作为上下文
+   const messageWithContext = skillContext
+      ? `${userMessage}\n\n相关技能执行结果:\n${skillContext}`
+      : userMessage;
+
+    streamMessage(agentId, messageWithContext, {
       onChunk: (chunk) => {
         accumulatedContent += chunk
         
@@ -124,25 +304,22 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
           }
         }
       },
-      onDone: (fullContent) => {
-        if (updateTimer) {
+     onDone: async (fullContent) => {
+       if (updateTimer) {
           clearTimeout(updateTimer)
         }
         flushContent()
 
-        const messageId = currentAiMessageIdRef.current
+       const messageId = currentAiMessageIdRef.current
         setTyping(agentId, false)
         setIsSending(false)
         currentAiMessageIdRef.current = null
 
-        const skillMatch = fullContent.match(/【技能:\s*([^】]+)】/)
-        const skillActivated = skillMatch ? skillMatch[1] : skillUsed
-        
-        const thinkMatch = fullContent.match(/<think>([\s\S]*?)<\/think>/i)
-        const thinkingMatch = fullContent.match(/(?:思考|分析|推理)[:：]\s*([\s\S]+?)(?=\n\n|$)/i)
+       const thinkMatch = fullContent.match(/<think>([\s\S]*?)<\/think>/i)
+       const thinkingMatch = fullContent.match(/(?:思考 | 分析 | 推理)[:：]\s*([\s\S]+?)(?=\n\n|$)/i)
 
         let thinkingContent: string | undefined
-        if (thinkMatch) {
+       if (thinkMatch) {
           thinkingContent = thinkMatch[1]
             .replace(/&lt;/g, '<')
             .replace(/&gt;/g, '>')
@@ -152,13 +329,22 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
           thinkingContent = thinkingMatch[1].trim()
         }
         
-        const mainContent = fullContent
+        let mainContent = fullContent
+          .replace(/<hr\s*\/?>/gi, '')
           .replace(/【技能:\s*[^】]+】\s*(已激活)?\n*/g, '')
+          .replace(/【调用技能:\s*[^】]+】\s*content:\s*["']?[\s\S]*?["']?\s*/gi, '')
+          .replace(/【调用技能:\s*[^】]+】\s*/gi, '')
+          .replace(/<p>【[^:]+:\s*[^】]+】<\/p>/gi, '')
+          .replace(/<p>【[^:]+:\s*[^】]+】content:/gi, '')
+          .replace(/<p>\s*<\/p>/g, '')
+          .replace(/\n{3,}/g, '\n\n')
           .replace(/<think>[\s\S]*?<\/think>/gi, '')
-          .replace(/(?:思考|分析|推理)[:：]\s*[\s\S]+?(?=\n\n|$)/gi, '')
+          .replace(/(?:思考 | 分析 | 推理)[:：]\s*[\s\S]+?(?=\n\n|$)/gi, '')
           .trim()
 
-        if (messageId) {
+        // 不再在 AI 回复后执行技能，因为已经在前面执行过了
+
+       if (messageId) {
           const agentChats = useAppStore.getState().chats[agentId]
           if (agentChats) {
             useAppStore.setState({
@@ -168,19 +354,33 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
                   ...agentChats,
                   messages: agentChats.messages.map(m => 
                     m.id === messageId 
-                      ? { ...m, content: mainContent || fullContent, status: 'sent' as const, skillActivated, thinkingContent, isStreaming: false }
+                      ? { ...m, content: mainContent || fullContent, status: 'sent' as const, skillActivated: finalSkillActivated, thinkingContent, isStreaming: false }
                       : m
                   ),
                 },
               },
             })
           }
+          
+          saveChatMessage(agentId, agent?.name || '智能体', mainContent || fullContent, 'assistant', finalSkillActivated, thinkingContent, 'sent')
+            .then(async (dbMessageId) => {
+              if (finalSkillActivated && finalSkillActivated.length > 0) {
+                for (const skillName of finalSkillActivated) {
+                  await saveSkillCall(agentId, skillName, dbMessageId, undefined, 'success')
+                }
+              }
+            })
+            .catch(err => console.error('保存AI回复失败:', err))
         }
       },
       onError: (error) => {
         setTyping(agentId, false)
         setIsSending(false)
         currentAiMessageIdRef.current = null
+        
+        saveChatMessage(agentId, agent?.name || '智能体', error, 'assistant', undefined, undefined, 'failed')
+          .catch(err => console.error('保存错误消息失败:', err))
+        
         addMessage(agentId, {
           content: error,
           isUser: false,
@@ -220,9 +420,15 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
     console.log('[Retry] Removed content:', removedContent ? 'success' : 'failed')
     if (!removedContent) return
 
+    deleteLastAiMessage(agentId).then(deletedId => {
+      if (deletedId) {
+        deleteSkillCallByMessageId(deletedId).catch(err => console.error('[Retry] 删除技能调用失败:', err))
+      }
+    }).catch(err => console.error('[Retry] 删除消息失败:', err))
+
     console.log('[Retry] Calling handleStreamSend...')
-    const skillUsed = agent?.skills?.[0]
-    handleStreamSend(lastUserMessage, skillUsed)
+    const skillActivated = findActivatedSkills(lastUserMessage, agent?.skills)
+    handleStreamSend(lastUserMessage, skillActivated)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -254,8 +460,12 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
   }
 
   const getChatAreaClasses = () => {
-    let baseClasses = 'flex-1 overflow-y-auto p-4 space-y-4'
+    let baseClasses = 'flex-1 overflow-y-auto p-4'
     return baseClasses
+  }
+
+  const getMessageWrapperClasses = () => {
+    return 'w-full'
   }
 
   const getEmptyMessageClasses = () => {
@@ -363,7 +573,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
   }
 
   const getMessageContainerClasses = (isUser: boolean) => {
-    return `flex ${isUser ? 'justify-end' : 'justify-start'} items-start gap-2`
+    return `flex ${isUser ? 'justify-end' : 'justify-start'} items-start gap-2 mb-4`
   }
 
   const getAttachmentButtonClasses = () => {
@@ -422,7 +632,8 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
         ref={chatAreaRef}
         className={getChatAreaClasses()}
       >
-        {chat.messages.length === 0 && (
+        <div className={getMessageWrapperClasses()}>
+          {chat.messages.length === 0 && (
           <div className={getEmptyMessageClasses()}>
             <p>开始与智能体对话吧！</p>
           </div>
@@ -485,6 +696,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
         )}
 
         <div ref={messagesEndRef} />
+        </div>
       </div>
 
       {showScrollButton && (
