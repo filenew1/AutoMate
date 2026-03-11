@@ -28,6 +28,13 @@
               "type": "todo",
               "storage_path": "./skills/todo-query",
               "version": "v1.0.0"
+            },
+            {
+              "name": "weather_query",
+              "description": "天气查询技能，用于查询天气信息",
+              "type": "weather",
+              "storage_path": "./skills/weather_query",
+              "version": "v1.0.0"
             }
           ]
         }

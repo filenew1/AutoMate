@@ -111,6 +111,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
     'todo_create': ['创建待办', '新建待办', '添加待办'],
     'todo_update': ['更新待办', '修改待办'],
     'todo_query': ['查询待办', '待办查询', '待办', '有多少个待办', '待办事项'],
+    'weather_query': ['天气', '气温', '温度', '下雨', '刮风', '湿度', '气象', 'weather', 'temperature', '深圳天气', '北京天气'],
   }
 
   const findActivatedSkills = (userMessage: string, skills?: string[]): string[] => {

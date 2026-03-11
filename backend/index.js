@@ -31,7 +31,6 @@ function executeSkill(skillName, parameters = {}) {
 
     const python = spawn('python', args, {
       cwd: path.join(SKILLS_BASE_PATH, skillName),
-      shell: true,
       env: { ...process.env, PYTHONIOENCODING: 'utf-8' }
     })
 
