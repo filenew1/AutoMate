@@ -5,6 +5,37 @@
 import requests
 import json
 import sys
+import os
+
+
+def load_city_map():
+    """加载城市映射配置"""
+    config_path = os.path.join(os.path.dirname(__file__), 'city_map.json')
+    try:
+        with open(config_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        city_map = {}
+        city_map.update(data.get('province_capitals', {}))
+        city_map.update(data.get('major_cities', {}))
+        return city_map
+    except Exception as e:
+        print(f"[Warning] 加载城市映射配置失败: {e}", file=sys.stderr)
+        return {
+            '深圳': 'Shenzhen',
+            '北京': 'Beijing',
+            '上海': 'Shanghai',
+            '广州': 'Guangzhou',
+            '杭州': 'Hangzhou',
+            '成都': 'Chengdu',
+            '武汉': 'Wuhan',
+            '西安': "Xi'an",
+            '南京': 'Nanjing',
+            '重庆': 'Chongqing',
+            '天津': 'Tianjin'
+        }
+
+
+CITY_MAP = load_city_map()
 
 
 def query_weather(location="深圳"):
@@ -12,19 +43,7 @@ def query_weather(location="深圳"):
     API_KEY = "cec42fc25f5a5c76e46f88cf536725bf"
     BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 
-    city_map = {
-        '深圳': 'Shenzhen',
-        '北京': 'Beijing',
-        '上海': 'Shanghai',
-        '广州': 'Guangzhou',
-        '杭州': 'Hangzhou',
-        '成都': 'Chengdu',
-        '武汉': 'Wuhan',
-        '西安': "Xi'an",
-        '南京': 'Nanjing',
-        '重庆': 'Chongqing',
-        '天津': 'Tianjin'
-    }
+    city_map = CITY_MAP
 
     known_cities = list(city_map.keys())
 

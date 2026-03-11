@@ -15,9 +15,18 @@
 - [示例脚本(demo.py)](file://OpenSkills-main/examples/demo.py)
 - [示例脚本(test_sandbox.py)](file://OpenSkills-main/examples/test_sandbox.py)
 - [天气查询脚本(main.py)](file://skills/weather_query/main.py)
+- [天气查询测试脚本(test_weather.py)](file://test_weather.py)
 - [主程序(main_correct.py)](file://main_correct.py)
 - [前端包配置(package.json)](file://package.json)
 </cite>
+
+## 更新摘要
+**变更内容**
+- 新增天气查询技能的详细实现分析
+- 更新参数传递机制的JSON处理策略
+- 增强错误处理和异常管理的最佳实践
+- 完善Python脚本开发规范和调试技巧
+- 补充stdout/stderr输出捕获的详细流程
 
 ## 目录
 1. [简介](#简介)
@@ -25,11 +34,14 @@
 3. [核心组件](#核心组件)
 4. [架构总览](#架构总览)
 5. [详细组件分析](#详细组件分析)
-6. [依赖分析](#依赖分析)
-7. [性能考虑](#性能考虑)
-8. [故障排除指南](#故障排除指南)
-9. [结论](#结论)
-10. [附录](#附录)
+6. [天气查询技能实现](#天气查询技能实现)
+7. [参数传递机制](#参数传递机制)
+8. [错误处理策略](#错误处理策略)
+9. [依赖分析](#依赖分析)
+10. [性能考虑](#性能考虑)
+11. [故障排除指南](#故障排除指南)
+12. [结论](#结论)
+13. [附录](#附录)
 
 ## 简介
 本文件面向AutoMate平台的Python集成机制，系统性阐述以下主题：
@@ -38,6 +50,8 @@
 - stdout/stderr输出捕获、错误处理与进程状态监控
 - Python环境配置、依赖管理与版本兼容性
 - Python脚本开发规范与调试技巧
+
+**新增功能**：本次更新重点介绍了天气查询技能的完整实现，包括城市识别算法、API调用策略和错误处理机制。
 
 目标是帮助开发者在AutoMate中可靠地执行Python脚本，并在本地或远程沙箱环境中进行安全隔离的代码执行。
 
@@ -64,6 +78,7 @@ subgraph "示例与技能"
 DEMO["示例脚本<br/>examples/demo.py"]
 TEST["沙箱测试<br/>examples/test_sandbox.py"]
 WEATHER["天气查询脚本<br/>skills/weather_query/main.py"]
+TEST_WEATHER["天气查询测试<br/>test_weather.py"]
 MAIN["主程序<br/>main_correct.py"]
 end
 FE --> BE
@@ -76,6 +91,7 @@ CORE --> META
 DEMO --> CORE
 TEST --> SANDBOX
 WEATHER --> CORE
+TEST_WEATHER --> WEATHER
 MAIN --> CORE
 ```
 
@@ -89,6 +105,7 @@ MAIN --> CORE
 - [示例脚本(demo.py)](file://OpenSkills-main/examples/demo.py#L1-L290)
 - [示例脚本(test_sandbox.py)](file://OpenSkills-main/examples/test_sandbox.py#L1-L85)
 - [天气查询脚本(main.py)](file://skills/weather_query/main.py#L1-L139)
+- [天气查询测试脚本(test_weather.py)](file://test_weather.py#L1-L29)
 - [主程序(main_correct.py)](file://main_correct.py#L1-L75)
 - [前端包配置(package.json)](file://package.json#L1-L47)
 
@@ -276,7 +293,7 @@ class SkillDependency {
 ### 日志器：执行过程可视化
 - 统一输出：支持成功/失败/进度/系统命令执行等日志级别。
 - 截断策略：对过长命令进行截断，提升可读性。
-- 单次记录：_log_ready_once()确保“就绪”消息仅打印一次。
+- 单次记录：_log_ready_once()确保"就绪"消息仅打印一次。
 
 **章节来源**
 - [OpenSkills沙箱日志器](file://OpenSkills-main/openskills/sandbox/logger.py#L149-L187)
@@ -295,6 +312,135 @@ class SkillDependency {
 - [主程序(main_correct.py)](file://main_correct.py#L1-L75)
 - [示例脚本(demo.py)](file://OpenSkills-main/examples/demo.py#L1-L290)
 - [示例脚本(test_sandbox.py)](file://OpenSkills-main/examples/test_sandbox.py#L1-L85)
+
+## 天气查询技能实现
+
+### 城市识别与匹配算法
+天气查询技能实现了智能的城市名称识别功能，支持中英文混合输入：
+
+- **城市映射表**：包含11个主要中国城市的中英文对照
+- **多轮匹配策略**：
+  1. 直接匹配中文城市名
+  2. 忽略大小写的模糊匹配
+  3. 支持中英文混输的智能识别
+- **容错处理**：对输入进行清理和标准化处理
+
+### API调用策略
+- **API密钥管理**：内置OpenWeatherMap API密钥
+- **参数构建**：自动添加语言(lang)和单位(units)参数
+- **查询优化**：为中文城市自动添加",CN"后缀确保准确性
+- **超时控制**：设置10秒请求超时
+
+### 输出格式化
+- **结构化数据**：返回包含温度、湿度、风速等完整气象信息
+- **友好展示**：使用emoji表情符号美化输出格式
+- **错误处理**：统一的错误信息格式化
+
+```mermaid
+flowchart TD
+Input["用户输入: '广州天气'"] --> Clean["清理输入: '广州天气'"]
+Clean --> Extract["提取城市名: '广州'"]
+Extract --> Map["城市映射: 广州 -> Guangzhou"]
+Map --> Params["构建参数: {q: 'Guangzhou,CN', lang: 'zh_cn', units: 'metric'}"]
+Params --> Request["发起API请求"]
+Request --> Response{"响应状态"}
+Response --> |200 OK| Success["解析成功数据"]
+Response --> |404 Not Found| Error["返回城市未找到错误"]
+Success --> Format["格式化输出"]
+Error --> FormatError["格式化错误信息"]
+Format --> Output["返回天气报告"]
+FormatError --> Output
+```
+
+**图表来源**
+- [天气查询脚本(main.py)](file://skills/weather_query/main.py#L10-L98)
+
+**章节来源**
+- [天气查询脚本(main.py)](file://skills/weather_query/main.py#L1-L139)
+
+## 参数传递机制
+
+### JSON参数处理
+核心执行器提供了灵活的参数传递机制：
+
+- **stdin传递**：支持通过标准输入传递JSON数据
+- **kwargs转换**：自动将关键字参数转换为JSON格式
+- **编码处理**：正确处理中文字符和特殊字符
+- **类型安全**：确保传递的数据格式正确
+
+### 命令行参数解析
+脚本支持多种参数传递方式：
+
+- **--params标志**：接收JSON字符串参数
+- **位置参数**：直接传递城市名称
+- **环境变量**：支持通过环境变量传递配置
+
+### 数据流处理
+```mermaid
+sequenceDiagram
+participant Caller as "调用方"
+participant Core as "核心执行器"
+participant Script as "Python脚本"
+Caller->>Core : execute(script_path, args, kwargs)
+Core->>Core : json.dumps(kwargs) if present
+Core->>Script : stdin.write(json_data)
+Script->>Script : sys.argv解析参数
+Script->>Script : JSON解析--params参数
+Script-->>Core : print输出结果
+Core-->>Caller : 返回stdout
+```
+
+**图表来源**
+- [OpenSkills核心执行器](file://OpenSkills-main/openskills/core/executor.py#L108-L110)
+- [OpenSkills沙箱执行器](file://OpenSkills-main/openskills/sandbox/executor.py#L307-L315)
+
+**章节来源**
+- [OpenSkills核心执行器](file://OpenSkills-main/openskills/core/executor.py#L61-L250)
+- [OpenSkills沙箱执行器](file://OpenSkills-main/openskills/sandbox/executor.py#L267-L355)
+
+## 错误处理策略
+
+### 分层错误处理
+天气查询技能实现了完整的错误处理机制：
+
+- **网络层错误**：HTTP请求异常、连接超时
+- **API层错误**：404未找到、401认证失败
+- **数据层错误**：JSON解析错误、字段缺失
+- **业务层错误**：城市识别失败、参数无效
+
+### 错误分类与处理
+```mermaid
+graph TD
+Error["执行错误"] --> NetError["网络错误"]
+Error --> APIError["API错误"]
+Error --> DataError["数据错误"]
+Error --> BusinessError["业务错误"]
+NetError --> HTTPError["HTTP错误"]
+NetError --> RequestError["请求异常"]
+APIError --> NotFound["404 未找到"]
+APIError --> AuthError["认证失败"]
+DataError --> JSONError["JSON解析错误"]
+DataError --> KeyError["键值错误"]
+BusinessError --> CityError["城市识别失败"]
+BusinessError --> ParamError["参数错误"]
+```
+
+**图表来源**
+- [天气查询脚本(main.py)](file://skills/weather_query/main.py#L83-L97)
+
+### 统一错误格式
+所有错误都返回统一的结构化格式：
+```json
+{
+  "success": false,
+  "error": "错误描述信息"
+}
+```
+
+这种设计确保了前端能够一致地处理各种类型的错误。
+
+**章节来源**
+- [天气查询脚本(main.py)](file://skills/weather_query/main.py#L83-L97)
 
 ## 依赖分析
 - Python版本要求：requires-python = ">=3.10"，支持3.10/3.11/3.12。
@@ -329,8 +475,7 @@ G --> F
 - 超时控制：统一的超时机制防止长时间阻塞，保障系统稳定性。
 - 沙箱批处理：沙箱执行器集中安装依赖与执行系统命令，减少重复开销。
 - I/O优化：通过stdin一次性传入JSON，避免多次文件读写。
-
-[本节为通用指导，无需特定文件引用]
+- 缓存策略：天气API响应时间短，适合在应用层面实现缓存机制。
 
 ## 故障排除指南
 - 脚本未找到/扩展名不受支持：检查脚本路径与扩展名映射，确认SUPPORTED_EXTENSIONS包含.py等。
@@ -338,6 +483,7 @@ G --> F
 - 沙箱连接失败：确认沙箱服务地址与端口，使用健康检查接口验证连通性。
 - 依赖安装失败：检查pip命令生成与网络访问；必要时启用pip升级。
 - 输出为空：确认脚本正确输出到stdout，避免仅写入stderr；检查stdin数据格式。
+- 天气查询失败：检查API密钥有效性，确认城市名称格式正确，验证网络连接。
 
 **章节来源**
 - [OpenSkills核心执行器](file://OpenSkills-main/openskills/core/executor.py#L61-L250)
@@ -345,9 +491,9 @@ G --> F
 - [AIO沙箱集成指南](file://OpenSkills-main/docs/sandbox.md#L222-L232)
 
 ## 结论
-AutoMate的Python集成通过核心执行器与沙箱执行器实现了安全、可控且高性能的脚本执行能力。结合依赖模型与日志器，开发者可以快速构建可维护的技能脚本，并在本地或远程沙箱环境中稳定运行。遵循本文的开发规范与调试技巧，可显著提升脚本质量与交付效率。
+AutoMate的Python集成通过核心执行器与沙箱执行器实现了安全、可控且高性能的脚本执行能力。结合依赖模型与日志器，开发者可以快速构建可维护的技能脚本，并在本地或远程沙箱环境中稳定运行。天气查询技能的实现展示了如何在实际应用中运用这些机制，包括智能参数解析、完善的错误处理和友好的用户输出。
 
-[本节为总结性内容，无需特定文件引用]
+遵循本文的开发规范与调试技巧，可显著提升脚本质量与交付效率。
 
 ## 附录
 
@@ -372,7 +518,19 @@ AutoMate的Python集成通过核心执行器与沙箱执行器实现了安全、
 ### 示例与最佳实践
 - 示例脚本：演示Reference自动发现、LLM智能选择、Azure OpenAI支持与沙箱测试。
 - 最佳实践：在脚本中显式处理异常与超时；使用stdin传递结构化参数；通过日志器记录关键步骤。
+- 天气查询测试：使用test_weather.py验证不同城市输入的处理效果。
 
 **章节来源**
 - [示例脚本(demo.py)](file://OpenSkills-main/examples/demo.py#L1-L290)
 - [示例脚本(test_sandbox.py)](file://OpenSkills-main/examples/test_sandbox.py#L1-L85)
+- [天气查询测试脚本(test_weather.py)](file://test_weather.py#L1-L29)
+
+### 调试工具与技巧
+- **本地测试**：使用test_weather.py快速验证天气查询功能
+- **参数调试**：通过--params标志传递复杂JSON参数
+- **日志分析**：利用沙箱日志器追踪执行过程
+- **错误诊断**：检查stderr输出获取详细的错误信息
+
+**章节来源**
+- [天气查询测试脚本(test_weather.py)](file://test_weather.py#L1-L29)
+- [OpenSkills沙箱日志器](file://OpenSkills-main/openskills/sandbox/logger.py#L149-L187)
