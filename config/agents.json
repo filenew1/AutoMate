@@ -6,7 +6,7 @@
         {
           "id": "agent-001",
           "name": "智能助手",
-          "description": "你好！我是智能助手，我可以帮你管理待办事项。",
+          "description": "你好！我是智能助手，我可以帮助你管理待办事项、优化官方文档、查询天气、查询异常证照等。",
           "avatar": "avatar-1.png",
           "type": "general",
           "config": {
@@ -20,21 +20,32 @@
               "description": "官方文档优化技能，用于优化官方文档的内容",
               "type": "information",
               "storage_path": "./skills/official-doc-optimize",
-              "version": "v1.0.0"
+              "version": "v1.0.0",
+              "keywords": ["格式优化", "优化", "文档优化"]
             },
             {
               "name": "todo-query",
               "description": "待办查询技能，用于查询待办事项",
               "type": "todo",
               "storage_path": "./skills/todo-query",
-              "version": "v1.0.0"
+              "version": "v1.0.0",
+              "keywords": ["待办", "todo", "查询待办", "待办事项", "待办查询", "有多少个待办"]
             },
             {
               "name": "weather_query",
               "description": "天气查询技能，用于查询天气信息",
               "type": "weather",
               "storage_path": "./skills/weather_query",
-              "version": "v1.0.0"
+              "version": "v1.0.0",
+              "keywords": ["天气", "气温", "温度", "下雨", "刮风", "湿度", "气象", "weather", "temperature", "深圳天气", "北京天气"]
+            },
+            {
+              "name": "exception-license",
+              "description": "异常证照查询技能，用于查询异常证照信息",
+              "type": "exception-license",
+              "storage_path": "./skills/exception-license",
+              "version": "v1.0.0",
+              "keywords": ["异常证照", "证照", "证照查询", "异常", "证照状态", "证照异常"]
             }
           ]
         }
@@ -60,21 +71,24 @@
               "description": "代码生成技能，用于生成各种编程语言的代码",
               "type": "code",
               "storage_path": "./skills/code_generate",
-              "version": "v1.0.0"
+              "version": "v1.0.0",
+              "keywords": ["代码生成", "生成代码", "写代码"]
             },
             {
               "name": "code_debug",
               "description": "代码调试技能，用于调试和修复代码",
               "type": "code",
               "storage_path": "./skills/code_debug",
-              "version": "v1.0.0"
+              "version": "v1.0.0",
+              "keywords": ["调试", "debug", "修复代码"]
             },
             {
               "name": "code_optimize",
               "description": "代码优化技能，用于优化代码性能和可读性",
               "type": "code",
               "storage_path": "./skills/code_optimize",
-              "version": "v1.0.0"
+              "version": "v1.0.0",
+              "keywords": ["优化代码", "代码优化"]
             }
           ]
         },
@@ -95,21 +109,24 @@
               "description": "创建待办事项技能",
               "type": "productivity",
               "storage_path": "./skills/todo_create",
-              "version": "v1.0.0"
+              "version": "v1.0.0",
+              "keywords": ["创建待办", "新建待办", "添加待办"]
             },
             {
               "name": "todo_update",
               "description": "更新待办事项技能",
               "type": "productivity",
               "storage_path": "./skills/todo_update",
-              "version": "v1.0.0"
+              "version": "v1.0.0",
+              "keywords": ["更新待办", "修改待办"]
             },
             {
               "name": "todo_query",
               "description": "查询待办事项技能",
               "type": "productivity",
               "storage_path": "./skills/todo_query",
-              "version": "v1.0.0"
+              "version": "v1.0.0",
+              "keywords": ["查询待办", "待办查询", "待办", "有多少个待办", "待办事项"]
             }
           ]
         }

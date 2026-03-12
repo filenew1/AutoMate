@@ -12,6 +12,7 @@ export interface Skill {
   type: string;
   storage_path: string;
   version: string;
+  keywords?: string[];
 }
 
 export interface Agent {
@@ -96,11 +97,17 @@ function buildSystemPrompt(agent: Agent, skillDescriptions: Map<string, string>)
 export async function* streamChatWithAgent(
   agent: Agent,
   userMessage: string,
-  skillDescriptions: Map<string, string> = new Map()
+  skillDescriptions: Map<string, string> = new Map(),
+  conversationHistory: ChatMessage[] = []
 ): AsyncGenerator<StreamChunk, void, unknown> {
   const systemPrompt = buildSystemPrompt(agent, skillDescriptions);
+  
+  // Limit to last 3 rounds (6 messages: 3 user + 3 assistant)
+  const recentHistory = conversationHistory.slice(-6);
+  
   const messages: ChatMessage[] = [
     { role: 'system', content: systemPrompt },
+    ...recentHistory,
     { role: 'user', content: userMessage }
   ];
 

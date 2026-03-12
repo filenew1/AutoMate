@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useAppStore } from '@/store/useAppStore';
-import { chatWithAgent, loadAllSkillsDescriptions, streamChatWithAgent, Agent, ChatResponse } from '@/types/chat';
+import { chatWithAgent, loadAllSkillsDescriptions, streamChatWithAgent, Agent, ChatResponse, ChatMessage } from '@/types/chat';
 
 export interface StreamHandler {
   onChunk: (content: string) => void;
@@ -10,9 +10,10 @@ export interface StreamHandler {
 
 interface UseAgentChatReturn {
   sendMessage: (agentId: string, message: string) => Promise<ChatResponse | null>;
-  streamMessage: (agentId: string, message: string, handler: StreamHandler) => Promise<void>;
+  streamMessage: (agentId: string, message: string, conversationHistory?: ChatMessage[], handler?: StreamHandler) => Promise<void>;
   isLoading: boolean;
   error: string | null;
+  skillKeywordMap: Record<string, string[]>;
 }
 
 export const useAgentChat = (): UseAgentChatReturn => {
@@ -21,6 +22,7 @@ export const useAgentChat = (): UseAgentChatReturn => {
   const [error, setError] = useState<string | null>(null);
   const [skillDescriptions, setSkillDescriptions] = useState<Map<string, string>>(new Map());
   const [fullAgentsConfig, setFullAgentsConfig] = useState<Agent[]>([]);
+  const [skillKeywordMap, setSkillKeywordMap] = useState<Record<string, string[]>>({});
 
   useEffect(() => {
     const loadFullConfig = async () => {
@@ -30,13 +32,21 @@ export const useAgentChat = (): UseAgentChatReturn => {
         const data = await response.json();
         
         const allAgents: Agent[] = [];
+        const keywordMap: Record<string, string[]> = {};
+        
         for (const group of data.agents) {
           for (const agent of group.agents) {
             allAgents.push(agent as Agent);
+            for (const skill of agent.skills || []) {
+              if (skill.keywords && skill.keywords.length > 0) {
+                keywordMap[skill.name] = skill.keywords;
+              }
+            }
           }
         }
         
         setFullAgentsConfig(allAgents);
+        setSkillKeywordMap(keywordMap);
         
         const skills = await loadAllSkillsDescriptions(allAgents);
         setSkillDescriptions(skills);
@@ -81,16 +91,20 @@ export const useAgentChat = (): UseAgentChatReturn => {
     }
   }, [fullAgentsConfig, skillDescriptions]);
 
-  const streamMessage = useCallback(async (agentId: string, message: string, handler: StreamHandler): Promise<void> => {
+  const streamMessage = useCallback(async (agentId: string, message: string, conversationHistory?: ChatMessage[], handler?: StreamHandler): Promise<void> => {
+    if (!handler) {
+      console.warn('[useAgentChat] streamMessage called without handler')
+      return
+    }
     const agent = fullAgentsConfig.find(a => a.id === agentId);
     
     if (!agent) {
-      handler.onError(`智能体 ${agentId} 未找到`);
+      handler?.onError(`智能体 ${agentId} 未找到`);
       return;
     }
 
     if (!agent.config?.url || !agent.config?.api_key) {
-      handler.onError(`智能体 ${agent.name} 缺少API配置`);
+      handler?.onError(`智能体 ${agent.name} 缺少API配置`);
       return;
     }
 
@@ -100,19 +114,19 @@ export const useAgentChat = (): UseAgentChatReturn => {
     try {
       let fullContent = '';
       
-      for await (const chunk of streamChatWithAgent(agent, message, skillDescriptions)) {
+      for await (const chunk of streamChatWithAgent(agent, message, skillDescriptions, conversationHistory)) {
         if (chunk.done) {
           break;
         }
         fullContent += chunk.content;
-        handler.onChunk(chunk.content);
+        handler?.onChunk(chunk.content);
       }
       
-      handler.onDone(fullContent);
+      handler?.onDone(fullContent);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '流式输出失败';
       setError(errorMessage);
-      handler.onError(errorMessage);
+      handler?.onError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -122,6 +136,7 @@ export const useAgentChat = (): UseAgentChatReturn => {
     sendMessage,
     streamMessage,
     isLoading,
-    error
+    error,
+    skillKeywordMap
   };
 };

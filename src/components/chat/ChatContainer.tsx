@@ -5,6 +5,7 @@ import { Send, Paperclip, Square } from 'lucide-react'
 import { EnhancedMessageBubble } from './EnhancedMessageBubble'
 import { saveChatMessage, saveSkillCall, getLast24HoursChatMessages, deleteLastAiMessage, deleteSkillCallByMessageId, initHybridStorage } from '@/services/hybridStorage'
 import { callSkill } from '@/services/skillService'
+import { ChatMessage } from '@/types/chat'
 
 interface ChatContainerProps {
   agentId: string
@@ -27,7 +28,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
     init()
   }, [])
   const { agents, chats, addMessage, updateMessageContent, updateMessageThinkingContent, setTyping, theme } = useAppStore()
-  const { streamMessage } = useAgentChat()
+  const { streamMessage, skillKeywordMap } = useAgentChat()
   const [inputText, setInputText] = useState('')
   const [showScrollButton, setShowScrollButton] = useState(false)
   const [isSending, setIsSending] = useState(false)
@@ -101,18 +102,6 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
     }
     loadHistory()
   }, [agentId, isInitialized])
-
-  const skillKeywordMap: Record<string, string[]> = {
-    'todo-query': ['待办', 'todo', '查询待办', '待办事项', '待办查询', '待办', '有多少个待办', '待办事项'],
-    'official-doc-optimize': ['文档', '优化', 'doc', '文档优化'],
-    'code_generate': ['代码生成', '生成代码', '写代码'],
-    'code_debug': ['调试', 'debug', '修复代码'],
-    'code_optimize': ['优化代码', '代码优化'],
-    'todo_create': ['创建待办', '新建待办', '添加待办'],
-    'todo_update': ['更新待办', '修改待办'],
-    'todo_query': ['查询待办', '待办查询', '待办', '有多少个待办', '待办事项'],
-    'weather_query': ['天气', '气温', '温度', '下雨', '刮风', '湿度', '气象', 'weather', 'temperature', '深圳天气', '北京天气'],
-  }
 
   const findActivatedSkills = (userMessage: string, skills?: string[]): string[] => {
     if (!skills || skills.length === 0) return [];
@@ -238,28 +227,27 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
   }
 
   const handleStreamSend = async (userMessage: string, skillActivated?: string[]) => {
-    // 先执行技能（如果有）
-   const finalSkillActivated = skillActivated && skillActivated.length > 0 
+    const finalSkillActivated = skillActivated && skillActivated.length > 0 
       ? skillActivated 
       : findActivatedSkills(userMessage, agent?.skills)
     
-    let skillContext = '';
-   if (finalSkillActivated && finalSkillActivated.length > 0) {
-     const skillResult = await executeSkillsBeforeResponse(userMessage, finalSkillActivated);
-     if (skillResult.hasSkills) {
-       skillContext = skillResult.skillResults;
-      }
-    }
-
     setTyping(agentId, true)
 
-   const messageId = addMessage(agentId, {
-     content: '',
+    const messageId = addMessage(agentId, {
+      content: '',
       isUser: false,
       status: 'sending',
       isStreaming: true,
     })
     currentAiMessageIdRef.current = messageId
+
+    let skillContext = '';
+    if (finalSkillActivated && finalSkillActivated.length > 0) {
+      const skillResult = await executeSkillsBeforeResponse(userMessage, finalSkillActivated);
+      if (skillResult.hasSkills) {
+        skillContext = skillResult.skillResults;
+      }
+    }
 
     let accumulatedContent = ''
     let updateTimer: ReturnType<typeof setTimeout> | null = null
@@ -276,7 +264,24 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
       ? `${userMessage}\n\n相关技能执行结果:\n${skillContext}`
       : userMessage;
 
-    streamMessage(agentId, messageWithContext, {
+    // 构建对话历史 (最近3轮 = 6条消息)
+    const conversationHistory: ChatMessage[] = [];
+    const messages = chat.messages;
+    const maxHistoryRounds = 3;
+    const maxMessages = maxHistoryRounds * 2;
+    
+    // 从已有的消息中提取最近的用户和AI对话
+    const recentMessages = messages.slice(-maxMessages);
+    for (const msg of recentMessages) {
+      if (msg.content && msg.content.trim()) {
+        conversationHistory.push({
+          role: msg.isUser ? 'user' : 'assistant',
+          content: msg.content
+        });
+      }
+    }
+
+    streamMessage(agentId, messageWithContext, conversationHistory, {
       onChunk: (chunk) => {
         accumulatedContent += chunk
         
@@ -305,7 +310,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ agentId }) => {
           }
         }
       },
-     onDone: async (fullContent) => {
+      onDone: async (fullContent) => {
        if (updateTimer) {
           clearTimeout(updateTimer)
         }
